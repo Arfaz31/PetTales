@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { TErrorSource, TGenericErrorResponse } from '../Interface/errorType';
+import { TErrorSource, TGenericErrorResponse } from '../Interface/error';
 
 //Object.values() allows you to ignore the field names (name, age) directly giving you an array of error objects [{meassge:'', path:''}]
 const handleValidationError = (

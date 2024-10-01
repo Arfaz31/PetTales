@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import { TErrorSource } from '../Interface/errorType';
+import { TErrorSource } from '../Interface/error';
 import { ZodError } from 'zod';
 import handleZodError from '../Error/handleZodError';
 import handleValidationError from '../Error/handleValidationError';
