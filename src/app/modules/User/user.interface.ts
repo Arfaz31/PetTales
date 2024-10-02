@@ -3,19 +3,18 @@ import { USER_Role, USER_STATUS } from './user.constant';
 
 export type TUser = {
   name: string;
-  role: keyof typeof USER_Role;
   email: string;
   password: string;
+  mobileNumber: string;
+  gender: 'male' | 'female' | 'other';
+  role: keyof typeof USER_Role;
+  status: keyof typeof USER_STATUS;
+  address?: string;
+  followers?: Types.ObjectId[];
+  following?: Types.ObjectId[];
   profilePhoto?: string;
   coverImg?: string;
-  status: keyof typeof USER_STATUS;
   passwordChangedAt?: Date;
-  followers: Types.ObjectId[];
-  following: Types.ObjectId[];
-  mobileNumber?: string;
   about?: string;
-  contactNo?: string;
-  gender?: ['male', 'female', 'other'];
-  address?: string;
   isDeleted?: boolean;
 };

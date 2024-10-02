@@ -1,4 +1,5 @@
-import { NextFunction, Request, Response } from 'express';
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { TErrorSource } from '../Interface/error';
 import { ZodError } from 'zod';
 import handleZodError from '../Error/handleZodError';
@@ -7,21 +8,16 @@ import handleCastError from '../Error/handleCastError';
 import handleDuplicateError from '../Error/handleDuplicateError';
 import AppError from '../Error/AppError';
 import config from '../config';
+import { NextFunction, Request, Response } from 'express';
 
 const globalErrorHandler = (
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   err: any,
   req: Request,
   res: Response,
-  // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
   next: NextFunction,
 ) => {
-  // eslint-disable-next-line prefer-const
   let statusCode = 500;
-  // eslint-disable-next-line prefer-const
   let message = 'something went wrong';
-
-  // eslint-disable-next-line prefer-const
   let errorMessages: TErrorSource = [
     {
       path: '',

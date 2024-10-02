@@ -6,40 +6,49 @@ const createUserValidationSchema = z.object({
     name: z.string({
       required_error: 'Name is required',
     }),
-    role: z.nativeEnum(USER_Role).default(USER_Role.user),
     email: z
       .string({
         required_error: 'Email is required',
       })
       .email({
-        message: 'Invalid email',
+        message: 'Invalid email format',
       }),
     password: z.string({
       required_error: 'Password is required',
     }),
-    profilePhoto: z.string().optional(),
+    mobileNumber: z.string({
+      required_error: 'Mobile numberis required',
+    }),
+    gender: z.enum(['male', 'female', 'other'], {
+      required_error: 'Gender is required',
+    }),
+    role: z.nativeEnum(USER_Role).default(USER_Role.user),
     status: z.nativeEnum(USER_STATUS).default(USER_STATUS.basic),
-    passwordChangedAt: z.date().optional(),
+
+    // Followers field: optional, default empty array, validating ObjectId
     followers: z
       .array(
-        z.string().refine((val) => val.match(/^[0-9a-fA-F]{24}$/), {
+        z.string().refine((val) => /^[0-9a-fA-F]{24}$/.test(val), {
           message: 'Invalid ObjectId for follower',
         }),
       )
-      .optional(),
+      .optional()
+      .default([]),
+
+    // Following field: optional, default empty array, validating ObjectId
     following: z
       .array(
-        z.string().refine((val) => val.match(/^[0-9a-fA-F]{24}$/), {
+        z.string().refine((val) => /^[0-9a-fA-F]{24}$/.test(val), {
           message: 'Invalid ObjectId for following',
         }),
       )
-      .optional(),
-    mobileNumber: z.string().optional(),
-    about: z.string().optional(),
-    contactNo: z.string().optional(),
-    gender: z.enum(['male', 'female', 'other']).optional(),
-    address: z.string().optional(),
+      .optional()
+      .default([]),
+    passwordChangedAt: z.date().optional(),
+    profilePhoto: z.string().optional(),
     coverImg: z.string().optional(),
+    address: z.string().optional(),
+    about: z.string().optional(),
     isDeleted: z.boolean().default(false),
   }),
 });
