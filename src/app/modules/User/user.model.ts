@@ -1,10 +1,10 @@
 import { model, Schema } from 'mongoose';
-import { TUser } from './user.interface';
+import { TUser, UserModel } from './user.interface';
 import { USER_Role, USER_STATUS } from './user.constant';
 import bcrypt from 'bcrypt';
 import config from '../../config';
 
-const userSchema = new Schema<TUser>(
+const userSchema = new Schema<TUser, UserModel>(
   {
     name: {
       type: String,
@@ -101,4 +101,14 @@ export const isPasswordMatched = async (
   return isMatched;
 };
 
-export const User = model<TUser>('User', userSchema);
+//check if password changed after the token was issued. if that then the previous jwt token will be invalid
+userSchema.statics.isJWTIssuedBeforePasswordChanged = function (
+  passwordChangedTimestamp: Date,
+  jwtIssuedTimestamp: number,
+) {
+  const passwordChangedTime =
+    new Date(passwordChangedTimestamp).getTime() / 1000; //at first getTime () method converts the UTC time in seconds then it convert in miliseconds / 1000
+  return passwordChangedTime > jwtIssuedTimestamp;
+};
+
+export const User = model<TUser, UserModel>('User', userSchema);

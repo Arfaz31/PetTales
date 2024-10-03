@@ -1,13 +1,13 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Types } from 'mongoose';
+
 import AppError from '../../Error/AppError';
 import { USER_Role, USER_STATUS } from '../User/user.constant';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 
 export const createToken = (
   jwtPayload: {
-    _id?: Types.ObjectId;
+    _id?: string;
     email: string;
     role: keyof typeof USER_Role;
     status: keyof typeof USER_STATUS;

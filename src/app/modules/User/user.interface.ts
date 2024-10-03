@@ -1,7 +1,9 @@
 import { Types } from 'mongoose';
 import { USER_Role, USER_STATUS } from './user.constant';
+import { Model } from 'mongoose';
 
 export type TUser = {
+  _id?: string;
   name: string;
   email: string;
   password: string;
@@ -18,3 +20,10 @@ export type TUser = {
   about?: string;
   isDeleted?: boolean;
 };
+
+export interface UserModel extends Model<TUser> {
+  isJWTIssuedBeforePasswordChanged(
+    passwordChangedTimestamp: Date,
+    jwtIssuedTimestamp: number,
+  ): boolean;
+}

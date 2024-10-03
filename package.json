@@ -18,6 +18,7 @@
   "description": "",
   "dependencies": {
     "bcrypt": "^5.1.1",
+    "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.21.0",
@@ -25,15 +26,18 @@
     "jsonwebtoken": "^9.0.2",
     "mongodb": "^6.9.0",
     "mongoose": "^8.7.0",
+    "nodemailer": "^6.9.15",
     "zod": "^3.23.8"
   },
   "devDependencies": {
     "@eslint/js": "^9.11.1",
     "@types/bcrypt": "^5.0.2",
+    "@types/cookie-parser": "^1.4.7",
     "@types/cors": "^2.8.17",
     "@types/eslint__js": "^8.42.3",
     "@types/express": "^5.0.0",
     "@types/jsonwebtoken": "^9.0.7",
+    "@types/nodemailer": "^6.4.16",
     "eslint": "^9.11.1",
     "eslint-config-prettier": "^9.1.0",
     "prettier": "^3.3.3",
