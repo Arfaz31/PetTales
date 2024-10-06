@@ -44,19 +44,14 @@ const userSchema = new Schema<TUser, UserModel>(
     address: {
       type: String,
     },
-    followers: {
-      type: [{ type: Schema.Types.ObjectId, ref: 'User' }],
-      default: [], // Set default to an empty array (0 followers)
-    },
-    following: {
-      type: [{ type: Schema.Types.ObjectId, ref: 'User' }],
-      default: [], // Set default to an empty array (0 following)
-    },
+
     profilePhoto: {
       type: String,
+      default: null,
     },
     coverImg: {
       type: String,
+      default: null,
     },
     passwordChangedAt: {
       type: Date,
