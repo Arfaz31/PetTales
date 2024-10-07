@@ -1,7 +1,10 @@
 import { z } from 'zod';
+import mongoose from 'mongoose';
 
-export const likeSchema = z.object({
-  post: z.string(),
-  user: z.string(),
-  isUpvote: z.boolean(),
+const createLikeZodSchema = z.object({
+  postId: z.string().refine((id) => mongoose.Types.ObjectId.isValid(id), {
+    message: 'Invalid Post ID',
+  }),
 });
+
+export { createLikeZodSchema };

@@ -81,7 +81,7 @@ const updateMyPost = catchAsync(async (req, res) => {
 
 const deletePost = catchAsync(async (req, res) => {
   const { id } = req.params; // Get the post ID from params
-  const userId = req.user._id; // Get the user ID from the request (from auth middleware)
+  const userId = req.user._id;
   const result = await PostServices.deletePostFromDB(id, userId);
 
   sendResponse(res, {
