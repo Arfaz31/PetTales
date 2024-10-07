@@ -13,9 +13,13 @@ const likeSchema = new Schema<TLike>(
       ref: 'Post',
       required: true,
     },
-    isUpvote: {
-      type: Boolean,
-      required: true,
+    upvotes: {
+      type: Number,
+      default: 0,
+    },
+    downvotes: {
+      type: Number,
+      default: 0,
     },
   },
   {

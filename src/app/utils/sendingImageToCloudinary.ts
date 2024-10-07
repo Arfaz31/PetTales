@@ -9,6 +9,7 @@ cloudinary.config({
   api_secret: config.cloudinary_api_secret,
 });
 
+// Function to upload images to Cloudinary
 export const sendImageToCloudinary = (
   imageName: string,
   path: string,
@@ -19,10 +20,10 @@ export const sendImageToCloudinary = (
       { public_id: imageName },
       function (error, result) {
         if (error) {
-          reject(error); //upload error
+          reject(error);
         }
-        resolve(result as UploadApiResponse); //upload success
-        // console.log(result);
+        resolve(result as UploadApiResponse);
+        // console.log(result)
         // delete a file asynchronously
         fs.unlink(path, (err) => {
           if (err) {
@@ -46,9 +47,18 @@ const storage = multer.diskStorage({
   },
 });
 
-export const upload = multer({ storage: storage });
+const upload = multer({
+  storage: storage,
+  limits: {
+    fileSize: 5 * 1024 * 1024, // Limit to 5 MB for all files
+  },
+});
+
 // Single file uploads for profilePhoto and coverImg
 export const uploadSingleImage = upload.fields([
   { name: 'profilePhoto', maxCount: 1 },
   { name: 'coverImg', maxCount: 1 },
+]);
+export const uploadMultipleImage = upload.fields([
+  { name: 'postImages', maxCount: 10 },
 ]);

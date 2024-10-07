@@ -72,27 +72,6 @@ const updateUserValidationSchema = z.object({
     role: z.nativeEnum(USER_Role).default(USER_Role.user).optional(),
 
     status: z.nativeEnum(USER_STATUS).default(USER_STATUS.basic).optional(),
-
-    // // Followers field: optional, default empty array, validating ObjectId
-    // followers: z
-    //   .array(
-    //     z.string().refine((val) => /^[0-9a-fA-F]{24}$/.test(val), {
-    //       message: 'Invalid ObjectId for follower',
-    //     }),
-    //   )
-    //   .optional()
-    //   .default([]),
-
-    // // Following field: optional, default empty array, validating ObjectId
-    // following: z
-    //   .array(
-    //     z.string().refine((val) => /^[0-9a-fA-F]{24}$/.test(val), {
-    //       message: 'Invalid ObjectId for following',
-    //     }),
-    //   )
-    //   .optional()
-    //   .default([]),
-
     passwordChangedAt: z.date().optional(),
     // profilePhoto: z.string().optional(),
     // coverImg: z.string().optional(),

@@ -217,8 +217,4 @@ export const UserServices = {
   getSingleUserFromDB,
   updateMyProfile,
   deleteUserFromDB,
-  // CreateFollowUser,
-  // RemoveFollowUser,
-  // getUserFollowings,
-  // getUserFollowers,
 };

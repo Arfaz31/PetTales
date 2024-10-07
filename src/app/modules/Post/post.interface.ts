@@ -7,9 +7,7 @@ export type TPost = {
   user: Types.ObjectId;
   images?: string[];
   category: 'Tip' | 'Story';
-  isPremium: boolean;
-  upvotes: number;
-  downvotes: number;
-  createdAt?: Date;
-  comments?: Types.ObjectId[];
+  contentType: 'basic' | 'premium';
+  // upvotes: number;
+  // downvotes: number;
 };

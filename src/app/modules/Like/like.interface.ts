@@ -4,5 +4,6 @@ export type TLike = {
   _id?: string;
   user: Types.ObjectId;
   post: Types.ObjectId;
-  isUpvote: boolean;
+  upvotes?: number;
+  downvotes?: number;
 };

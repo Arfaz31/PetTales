@@ -18,33 +18,17 @@ const postSchema = new Schema<TPost>(
     },
     images: {
       type: [String],
+      default: null,
     },
     category: {
       type: String,
       enum: ['Tip', 'Story'],
       required: true,
     },
-    isPremium: {
-      type: Boolean,
-      default: false,
-    },
-    upvotes: {
-      type: Number,
-      default: 0,
-    },
-    downvotes: {
-      type: Number,
-      default: 0,
-    },
-    comments: [
-      {
-        type: Schema.Types.ObjectId,
-        ref: 'Comment',
-      },
-    ],
-    createdAt: {
-      type: Date,
-      default: Date.now,
+    contentType: {
+      type: String,
+      enum: ['basic', 'premium'],
+      required: true,
     },
   },
   {
