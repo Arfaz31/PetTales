@@ -110,29 +110,31 @@ const updateMyPost = async (
     throw new AppError(httpStatus.NOT_FOUND, 'Post not found');
   }
 
-  // Upload profilePhoto to Cloudinary if provided
-  const postImages = images?.postImages;
-
-  if (!postImages || postImages.length === 0) {
-    throw new AppError(
-      httpStatus.BAD_REQUEST,
-      'No images uploaded. Please upload images.',
-    );
+  if (post.isPublished === false) {
+    throw new AppError(httpStatus.NOT_FOUND, 'Post is not published');
   }
 
+  // Upload new images to Cloudinary if provided
+  const postImages = images?.postImages ?? [];
+
+  // Upload images to Cloudinary and map the URLs to `uploadedImages`
   const uploadedImages = await Promise.all(
-    postImages.map((image, index) => {
-      // Log the image being uploaded
-      //   console.log(`Uploading image ${index + 1}: ${image.path}`);
-      return sendImageToCloudinary(
-        `${userId}_postImage_${index + 1}`,
-        image.path,
-      );
-    }),
+    postImages.map((image, index) =>
+      sendImageToCloudinary(`${userId}_postImage_${index + 1}`, image.path),
+    ),
   );
 
-  // Map the uploaded image URLs to payload
-  data.images = uploadedImages.map((img) => img.secure_url as string);
+  // If new images are provided, merge with existing images, else retain old images
+  if (uploadedImages.length > 0) {
+    // Ensure post.images is an array before spreading it
+    data.images = [
+      ...(post.images ?? []),
+      ...uploadedImages.map((img) => img.secure_url as string),
+    ];
+  } else {
+    // If no new images are uploaded, retain the existing images
+    data.images = post.images ?? [];
+  }
 
   // If no data or files are provided, simply return the current profile
   if (Object.keys(data).length === 0) {
@@ -163,6 +165,21 @@ const deletePostFromDB = async (postId: string, userId: string) => {
   return result;
 };
 
+const unpublishPost = async (postId: string) => {
+  const post = await Post.findById(postId);
+
+  if (!post) {
+    throw new AppError(httpStatus.NOT_FOUND, 'Post not found');
+  }
+
+  // Unpublish the post by setting `isPublished` to `false`
+  post.isPublished = false;
+
+  await post.save();
+
+  return post;
+};
+
 export const PostServices = {
   createPost,
   getAllPosts,
@@ -170,4 +187,5 @@ export const PostServices = {
   getMyAllPosts,
   updateMyPost,
   deletePostFromDB,
+  unpublishPost,
 };

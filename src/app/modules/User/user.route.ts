@@ -26,6 +26,7 @@ router.patch(
   validateRequest(updateUserValidationSchema),
   UserController.updateMyProfile,
 );
+router.patch('/:id/role', auth(USER_Role.admin), UserController.updateUserRole);
 
 router.delete('/:id', auth(USER_Role.admin), UserController.deleteUser);
 

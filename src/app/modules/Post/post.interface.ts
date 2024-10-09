@@ -8,6 +8,7 @@ export type TPost = {
   images?: string[];
   category: 'Tip' | 'Story';
   contentType: 'basic' | 'premium';
+  isPublished?: boolean;
   // upvotes: number;
   // downvotes: number;
 };

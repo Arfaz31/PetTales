@@ -30,6 +30,10 @@ const postSchema = new Schema<TPost>(
       enum: ['basic', 'premium'],
       required: true,
     },
+    isPublished: {
+      type: Boolean,
+      default: true,
+    },
   },
   {
     timestamps: true,

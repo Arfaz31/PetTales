@@ -74,10 +74,43 @@ const deleteUserFromDB = async (id: string) => {
   return result;
 };
 
+const updateUserRoleIntoDB = async (
+  role: string,
+  payload: Partial<TUser>,
+  id: string,
+) => {
+  const user = await User.findOne({ _id: id });
+  if (!user) {
+    throw new Error('User not found');
+  }
+
+  if (id) {
+    if (role !== 'admin') {
+      throw new AppError(401, 'You have no access to update this profile');
+    }
+  }
+
+  const updatedUserRole = await User.findOneAndUpdate(
+    { id },
+    { $set: payload },
+    {
+      new: true,
+      runValidators: true,
+    },
+  );
+
+  if (!updatedUserRole) {
+    throw new Error('Failed to update user Role');
+  }
+
+  return updatedUserRole;
+};
+
 export const UserServices = {
   getAllUsersFromDB,
   getMeFromDB,
   getSingleUserFromDB,
   updateMyProfile,
   deleteUserFromDB,
+  updateUserRoleIntoDB,
 };

@@ -38,10 +38,16 @@ router.patch(
   '/update-post/:id',
   auth(USER_Role.user, USER_Role.admin),
   uploadMultipleImage,
-  validateImageFileRequest(ImageFilesArrayZodSchema),
+  // validateImageFileRequest(ImageFilesArrayZodSchema),
   parseBody,
   validateRequest(updatePostZodSchema),
   PostController.updateMyPost,
+);
+
+router.patch(
+  '/unpublish-post/:id',
+  auth(USER_Role.admin),
+  PostController.unpublishPost,
 );
 
 router.delete(

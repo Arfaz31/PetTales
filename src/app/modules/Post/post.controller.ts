@@ -1,3 +1,4 @@
+import httpStatus from 'http-status';
 import AppError from '../../Error/AppError';
 import { TImageFiles } from '../../Interface/image.interface';
 import catchAsync from '../../utils/catchAsync';
@@ -92,6 +93,18 @@ const deletePost = catchAsync(async (req, res) => {
   });
 });
 
+const unpublishPost = catchAsync(async (req, res) => {
+  const { id } = req.params; // Get the post ID from the request params
+
+  const result = await PostServices.unpublishPost(id);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Post unpublished successfully',
+    data: result,
+  });
+});
 export const PostController = {
   createPost,
   getAllPosts,
@@ -99,4 +112,5 @@ export const PostController = {
   getMyAllPosts,
   updateMyPost,
   deletePost,
+  unpublishPost,
 };

@@ -7,6 +7,7 @@ const createPostZodSchema = z.object({
     // user: z.string(),
     category: z.enum(['Tip', 'Story']),
     contentType: z.enum(['basic', 'premium']),
+    isPublished: z.boolean().default(true),
   }),
 });
 const updatePostZodSchema = z.object({
@@ -15,6 +16,7 @@ const updatePostZodSchema = z.object({
     content: z.string().min(10, 'Content is required').optional(),
     category: z.enum(['Tip', 'Story']).optional(),
     contentType: z.enum(['basic', 'premium']).optional(),
+    isPublished: z.boolean().default(true).optional(),
   }),
 });
 
