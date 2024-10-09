@@ -1,12 +1,20 @@
 import { z } from 'zod';
 
-export const createCommentSchema = z.object({
-  post: z.string(),
-  user: z.string(),
-  content: z.string().min(1, 'Content is required'),
+const createCommentZodSchema = z.object({
+  body: z.object({
+    post: z.string(),
+    content: z.string().min(1, 'Content is required'),
+  }),
 });
 
-export const updateCommentSchema = z.object({
-  commentId: z.string(),
-  content: z.string().min(1, 'Updated content is required'),
+const updateCommentZodSchema = z.object({
+  body: z.object({
+    commentId: z.string(),
+    content: z.string().min(1, 'Updated content is required'),
+  }),
 });
+
+export const CommentValidation = {
+  createCommentZodSchema,
+  updateCommentZodSchema,
+};

@@ -73,74 +73,10 @@ const deleteUser = catchAsync(async (req, res) => {
   });
 });
 
-// const followUser = catchAsync(async (req, res) => {
-//   const { id: followedUserId } = req.params; // User B (the user being followed)
-//   const currentUserId = req.user._id; // User A (the current logged-in user)
-//   const result = await UserServices.CreateFollowUser(
-//     followedUserId,
-//     currentUserId,
-//   );
-//   // res.status(200).json({
-//   //   success: true,
-//   //   message: 'User is followed successfully',
-//   //   data: result,
-//   // });
-//   sendResponse(res, {
-//     success: true,
-//     statusCode: httpStatus.OK,
-//     message: 'Successfully followed the user',
-//     data: result,
-//   });
-// });
-
-// const unfollowUser = catchAsync(async (req, res) => {
-//   const { id: unfollowedUserId } = req.params; // User B (the user being unfollowed)
-//   const currentUserId = req.user._id; // User A (the current logged-in user)
-//   const result = await UserServices.RemoveFollowUser(
-//     unfollowedUserId,
-//     currentUserId,
-//   );
-//   sendResponse(res, {
-//     success: true,
-//     statusCode: httpStatus.OK,
-//     message: 'Successfully unfollowed the user',
-//     data: result,
-//   });
-// });
-
-// const getFollowings = catchAsync(async (req, res) => {
-//   const { _id } = req.user; // Assuming you have user ID from request
-//   const currentUserId = _id;
-//   const result = await UserServices.getUserFollowings(currentUserId);
-
-//   sendResponse(res, {
-//     success: true,
-//     statusCode: httpStatus.OK,
-//     message: 'Followings are retrieved successfully',
-//     data: result,
-//   });
-// });
-
-// const getFollowers = catchAsync(async (req, res) => {
-//   const currentUserId = req.user._id;
-
-//   const result = await UserServices.getUserFollowers(currentUserId);
-//   sendResponse(res, {
-//     success: true,
-//     statusCode: httpStatus.OK,
-//     message: 'Followers are retrieved successfully',
-//     data: result,
-//   });
-// });
-
 export const UserController = {
   getAllUsers,
   getMe,
   getSingleUser,
   updateMyProfile,
   deleteUser,
-  // followUser,
-  // unfollowUser,
-  // getFollowings,
-  // getFollowers,
 };
