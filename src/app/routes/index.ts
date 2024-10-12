@@ -7,6 +7,7 @@ import { LikeRoutes } from '../modules/Like/like.route';
 import { CommentRoutes } from '../modules/Comment/comment.route';
 import { paymentRoutes } from '../modules/payment/payment.route';
 import { UnlockPostRoutes } from '../modules/UnlockPost/unlockPost.route';
+import { StatusUpgradeRoutes } from '../modules/Status-Upgrade/statusUpgrade.route';
 
 const router = Router();
 
@@ -42,6 +43,10 @@ const moduleRoutes = [
   {
     path: '/unlockPost',
     route: UnlockPostRoutes,
+  },
+  {
+    path: '/statusUpgrade',
+    route: StatusUpgradeRoutes,
   },
 ];
 

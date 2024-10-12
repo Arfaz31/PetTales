@@ -79,11 +79,16 @@ userSchema.methods.toJSON = function () {
 //password hash by bcrypt
 userSchema.pre('save', async function (next) {
   // eslint-disable-next-line @typescript-eslint/no-this-alias
-  const user = this; //'this' refers to the document that is being saved.
-  user.password = await bcrypt.hash(
-    user.password,
-    Number(config.bcrypt_salt_round),
-  );
+  const user = this;
+
+  // Only hash the password if it has been modified (i.e., during password changes). With this update, when you change fields like status or any other non-password-related fields, the password will remain unchanged in the database.
+  if (user.isModified('password')) {
+    user.password = await bcrypt.hash(
+      user.password,
+      Number(config.bcrypt_salt_round),
+    );
+  }
+
   next();
 });
 

@@ -1,14 +1,14 @@
 import httpStatus from 'http-status';
 import AppError from '../../Error/AppError';
 import { User } from '../User/user.model';
-import { TUnlockPost } from './unlockPost.interface';
-import { Post } from '../Post/post.model';
-import { UnlockPost } from './unlockPost.model';
+import { TStatusUpgrade } from './statusUpgrade.interface';
 import { initiatePayment } from '../payment/payment.utils';
+import { StatusUpgrade } from './statusUpgrade.model';
 
-const accessUnlockPostViaPayment = async (
+const PayForStatusUpgrade = async (
   userId: string,
-  payload: TUnlockPost,
+  status: 'basic' | 'premium',
+  payload: TStatusUpgrade,
 ) => {
   const user = await User.findOne({ _id: userId });
   if (!user) {
@@ -19,32 +19,30 @@ const accessUnlockPostViaPayment = async (
   if (isDeleted) {
     throw new AppError(httpStatus.FORBIDDEN, 'Your account has been deleted');
   }
-  const post = await Post.findOne({ _id: payload.postId });
-  // console.log('Post:', post);
-  if (!post) {
-    throw new AppError(httpStatus.NOT_FOUND, 'Post not found');
+
+  if (status === 'premium') {
+    throw new AppError(httpStatus.BAD_REQUEST, 'User is already premium.');
   }
 
   const transactionId = `TXN-${Date.now()}`;
-  const unLockPostData = {
+  const statusUpgradeData = {
     userId: userId,
-    postId: post._id,
-    amount: Number(post.price),
+    amount: Number(payload.amount),
     paymentStatus: 'Pending',
     transactionId,
   };
-  // console.log('unLockPostData:', unLockPostData);
+  // console.log('statusUpgradeData:', statusUpgradeData);
 
-  await UnlockPost.create(unLockPostData);
+  await StatusUpgrade.create(statusUpgradeData);
 
   const paymentData = {
     transactionId,
-    amount: Number(post.price),
+    amount: Number(payload.amount),
     custormerName: user.name,
     customerEmail: user.email,
     customerPhone: user.mobileNumber,
     customerAddress: user.address,
-    paymentType: 'unlockPost',
+    paymentType: 'statusUpgrade',
   };
   // console.log('paymentData:', paymentData);
 
@@ -56,6 +54,6 @@ const accessUnlockPostViaPayment = async (
   return paymentSession;
 };
 
-export const UnlockPostServices = {
-  accessUnlockPostViaPayment,
+export const StatusUpgradeServices = {
+  PayForStatusUpgrade,
 };
