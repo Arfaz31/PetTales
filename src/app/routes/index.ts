@@ -5,6 +5,8 @@ import { FollowRoutes } from '../modules/Follow/follow.route';
 import { PostRoutes } from '../modules/Post/post.route';
 import { LikeRoutes } from '../modules/Like/like.route';
 import { CommentRoutes } from '../modules/Comment/comment.route';
+import { paymentRoutes } from '../modules/payment/payment.route';
+import { UnlockPostRoutes } from '../modules/UnlockPost/unlockPost.route';
 
 const router = Router();
 
@@ -32,6 +34,14 @@ const moduleRoutes = [
   {
     path: '/comment',
     route: CommentRoutes,
+  },
+  {
+    path: '/payment',
+    route: paymentRoutes,
+  },
+  {
+    path: '/unlockPost',
+    route: UnlockPostRoutes,
   },
 ];
 

@@ -30,6 +30,18 @@ const postSchema = new Schema<TPost>(
       enum: ['basic', 'premium'],
       required: true,
     },
+    price: {
+      type: Number,
+      required: function () {
+        return this.contentType === 'premium';
+      },
+    }, // Premium posts must have a price
+    // unlockedBy: [
+    //   {
+    //     type: Schema.Types.ObjectId,
+    //     ref: 'User',
+    //   },
+    // ], // Users who unlocked this post
     isPublished: {
       type: Boolean,
       default: true,

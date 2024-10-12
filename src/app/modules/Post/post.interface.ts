@@ -8,7 +8,7 @@ export type TPost = {
   images?: string[];
   category: 'Tip' | 'Story';
   contentType: 'basic' | 'premium';
+  price?: number; // Price for premium posts
+  // unlockedBy?: Types.ObjectId[]; // Users who unlocked premium post
   isPublished?: boolean;
-  // upvotes: number;
-  // downvotes: number;
 };
