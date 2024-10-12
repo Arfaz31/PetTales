@@ -39,8 +39,8 @@ const getAllPosts = catchAsync(async (req, res) => {
 
 const getSinglePost = catchAsync(async (req, res) => {
   const { id } = req.params;
-  const userRole = req.user.role;
-  const post = await PostServices.getSinglePost(id, userRole);
+  const userId = req.user._id;
+  const post = await PostServices.getSinglePost(id, userId);
 
   sendResponse(res, {
     statusCode: 200,

@@ -1,6 +1,7 @@
 import AppError from '../../Error/AppError';
 import { TImageFiles } from '../../Interface/image.interface';
 import { sendImageToCloudinary } from '../../utils/sendingImageToCloudinary';
+import { UnlockPost } from '../UnlockPost/unlockPost.model';
 import { User } from '../User/user.model';
 import { TPost } from './post.interface';
 import { Post } from './post.model';
@@ -68,18 +69,31 @@ const getAllPosts = async () => {
   return posts;
 };
 
-const getSinglePost = async (postId: string, userRole: string) => {
+const getSinglePost = async (postId: string, userId: string) => {
   const post = await Post.findById(postId).populate('user');
   if (!post) {
     throw new AppError(httpStatus.NOT_FOUND, 'Post not found');
   }
 
-  // Check if the post is premium and the user has a basic role
-  if (post.contentType === 'premium' && userRole === 'basic') {
-    throw new AppError(
-      httpStatus.FORBIDDEN,
-      'Access denied. Premium content is restricted to premium users.',
-    );
+  // Allow post owner to access the premium post without paying
+  if (String(post.user._id) === String(userId)) {
+    return post;
+  }
+
+  // For premium posts, check if the user has already paid
+  if (post.contentType === 'premium') {
+    const unlockPost = await UnlockPost.findOne({
+      userId: userId,
+      postId: post._id,
+      paymentStatus: 'Paid',
+    });
+
+    if (!unlockPost) {
+      throw new AppError(
+        httpStatus.FORBIDDEN,
+        'Access denied. You need to unlock this premium post to access the content.',
+      );
+    }
   }
 
   return post;
