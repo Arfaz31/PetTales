@@ -105,6 +105,20 @@ const unpublishPost = catchAsync(async (req, res) => {
     data: result,
   });
 });
+
+const publishPost = catchAsync(async (req, res) => {
+  const { id } = req.params; // Get the post ID from the request params
+
+  const result = await PostServices.publishPost(id);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Post published successfully',
+    data: result,
+  });
+});
+
 export const PostController = {
   createPost,
   getAllPosts,
@@ -113,4 +127,5 @@ export const PostController = {
   updateMyPost,
   deletePost,
   unpublishPost,
+  publishPost,
 };

@@ -49,6 +49,11 @@ router.patch(
   auth(USER_Role.admin),
   PostController.unpublishPost,
 );
+router.patch(
+  '/publish-post/:id',
+  auth(USER_Role.admin),
+  PostController.publishPost,
+);
 
 router.delete(
   '/:id',

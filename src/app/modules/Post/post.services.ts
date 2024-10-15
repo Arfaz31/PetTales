@@ -23,7 +23,12 @@ const createPost = async (
     throw new AppError(httpStatus.FORBIDDEN, 'your account has been deleted');
   }
 
-  if (status === 'basic' && payload.contentType === 'premium') {
+  // Check if the user is trying to create premium content with basic status
+  if (
+    status === 'basic' &&
+    payload.contentType === 'premium' &&
+    user.role !== 'admin'
+  ) {
     throw new AppError(
       httpStatus.FORBIDDEN,
       'Basic users can only create basic content',
@@ -44,7 +49,6 @@ const createPost = async (
   //     postImages.map((img) => img.path),
   //   );
 
-  // Upload multiple images to Cloudinary
   //Uploads each image to Cloudinary using Promise.all to handle multiple asynchronous uploads.
   const uploadedImages = await Promise.all(
     postImages.map((image, index) => {
@@ -75,8 +79,13 @@ const getSinglePost = async (postId: string, userId: string) => {
     throw new AppError(httpStatus.NOT_FOUND, 'Post not found');
   }
 
-  // Allow post owner to access the premium post without paying
-  if (String(post.user._id) === String(userId)) {
+  const user = await User.findById(userId);
+  if (!user) {
+    throw new AppError(httpStatus.NOT_FOUND, 'User not found');
+  }
+
+  // Allow the post owner or an admin to access the premium post without paying
+  if (String(post.user._id) === String(userId) || user.role === 'admin') {
     return post;
   }
 
@@ -193,6 +202,20 @@ const unpublishPost = async (postId: string) => {
 
   return post;
 };
+const publishPost = async (postId: string) => {
+  const post = await Post.findById(postId);
+
+  if (!post) {
+    throw new AppError(httpStatus.NOT_FOUND, 'Post not found');
+  }
+
+  // Unpublish the post by setting `isPublished` to `false`
+  post.isPublished = true;
+
+  await post.save();
+
+  return post;
+};
 
 export const PostServices = {
   createPost,
@@ -202,4 +225,5 @@ export const PostServices = {
   updateMyPost,
   deletePostFromDB,
   unpublishPost,
+  publishPost,
 };
