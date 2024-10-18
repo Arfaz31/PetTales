@@ -19,7 +19,7 @@ const createUserValidationSchema = z.object({
     mobileNumber: z.string({
       required_error: 'Mobile numberis required',
     }),
-    gender: z.enum(['male', 'female', 'other'], {
+    gender: z.enum(['Male', 'Female', 'Other'], {
       required_error: 'Gender is required',
     }),
     role: z.nativeEnum(USER_Role).default(USER_Role.user),

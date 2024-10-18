@@ -7,7 +7,7 @@ export type TUser = {
   email: string;
   password: string;
   mobileNumber: string;
-  gender: 'male' | 'female' | 'other';
+  gender: 'Male' | 'Female' | 'Other';
   role: keyof typeof USER_Role;
   status: keyof typeof USER_STATUS;
   address?: string;

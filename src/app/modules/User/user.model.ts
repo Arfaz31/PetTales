@@ -26,7 +26,7 @@ const userSchema = new Schema<TUser, UserModel>(
     },
     gender: {
       type: String,
-      enum: ['male', 'female', 'other'], // Matches the tuple type in TUser
+      enum: ['Male', 'Female', 'Other'], // Matches the tuple type in TUser
       required: true,
     },
     role: {

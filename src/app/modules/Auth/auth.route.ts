@@ -11,7 +11,7 @@ import auth from '../../Middleware/auth';
 const router = express.Router();
 
 router.post(
-  '/signup',
+  '/register',
   validateRequest(createUserValidationSchema),
   AuthController.signup,
 );

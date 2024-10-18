@@ -8,9 +8,11 @@ import jwt, { JwtPayload } from 'jsonwebtoken';
 export const createToken = (
   jwtPayload: {
     _id?: string;
+    name: string;
     email: string;
     role: keyof typeof USER_Role;
     status: keyof typeof USER_STATUS;
+    profilePhoto: string | undefined;
   },
   secret: string,
   expiresIn: string,

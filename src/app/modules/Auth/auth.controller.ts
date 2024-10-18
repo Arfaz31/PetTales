@@ -16,7 +16,7 @@ const signup = catchAsync(async (req, res) => {
 
 const logIn = catchAsync(async (req, res) => {
   const result = await AuthServices.logInUser(req.body);
-  const { accessToken, refreshToken, userData } = result;
+  const { accessToken, refreshToken } = result;
 
   res.cookie('refreshToken', refreshToken, {
     httpOnly: true, //httpOnly: true: This setting ensures that the cookie cannot be accessed via JavaScript running in the browser (i.e., it is not accessible through document.cookie)
@@ -27,8 +27,10 @@ const logIn = catchAsync(async (req, res) => {
     statusCode: 201,
     success: true,
     message: 'User logged in successfully',
-    token: accessToken,
-    data: userData,
+    data: {
+      accessToken,
+      refreshToken,
+    },
   });
 });
 
@@ -57,10 +59,8 @@ const refreshToken = catchAsync(async (req, res) => {
 });
 
 const forgetPassword = catchAsync(async (req, res) => {
-  const _id = req.body._id;
-  const userId = _id;
-  console.log('userId:', userId);
-  const result = await AuthServices.forgetPassword(userId);
+  const { email } = req.body;
+  const result = await AuthServices.forgetPassword(email);
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,

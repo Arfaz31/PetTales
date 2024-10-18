@@ -16,10 +16,37 @@ const signUpIntoDB = async (payload: TUser) => {
       'You have already have an account',
     );
   }
+
   //create user
   const newUser = await User.create(payload);
 
-  return newUser;
+  //create token and sent to the  client
+
+  const jwtPayload = {
+    _id: newUser._id,
+    name: newUser.name,
+    email: newUser.email,
+    role: newUser.role,
+    status: newUser.status,
+    profilePhoto: newUser.profilePhoto,
+  };
+
+  const accessToken = createToken(
+    jwtPayload,
+    config.jwt_access_secret as string,
+    config.jwt_access_expire_in as string,
+  );
+
+  const refreshToken = createToken(
+    jwtPayload,
+    config.jwt_refresh_secret as string,
+    config.jwt_refresh_expire_in as string,
+  );
+
+  return {
+    accessToken,
+    refreshToken,
+  };
 };
 
 const logInUser = async (payload: TLoginUser) => {
@@ -47,9 +74,11 @@ const logInUser = async (payload: TLoginUser) => {
 
   const jwtPayload = {
     _id: user._id,
+    name: user.name,
     email: user.email,
     role: user.role,
     status: user.status,
+    profilePhoto: user.profilePhoto,
   };
 
   const accessToken = createToken(
@@ -64,20 +93,19 @@ const logInUser = async (payload: TLoginUser) => {
     config.jwt_refresh_expire_in as string,
   );
 
-  const userData = {
-    _id: user._id,
-    name: user.name,
-    email: user.email,
-    Phone: user.mobileNumber,
-    gender: user.gender,
-    role: user.role,
-    status: user.status,
-  };
+  // const userData = {
+  //   _id: user._id,
+  //   name: user.name,
+  //   email: user.email,
+  //   Phone: user.mobileNumber,
+  //   gender: user.gender,
+  //   role: user.role,
+  //   status: user.status,
+  // };
 
   return {
     accessToken,
     refreshToken,
-    userData,
   };
 };
 
@@ -154,9 +182,11 @@ const refreshToken = async (token: string) => {
 
   const jwtPayload = {
     _id: user._id,
+    name: user.name,
     email: user.email,
     role: user.role,
     status: user.status,
+    profilePhoto: user.profilePhoto,
   };
 
   const accessToken = createToken(
@@ -170,8 +200,8 @@ const refreshToken = async (token: string) => {
   };
 };
 
-const forgetPassword = async (userId: string) => {
-  const user = await User.findById(userId);
+const forgetPassword = async (email: string) => {
+  const user = await User.findOne({ email: email });
 
   if (!user) {
     throw new AppError(404, 'User not found');
@@ -183,9 +213,11 @@ const forgetPassword = async (userId: string) => {
   }
   const jwtPayload = {
     _id: user._id,
+    name: user.name,
     email: user.email,
     role: user.role,
     status: user.status,
+    profilePhoto: user.profilePhoto,
   };
 
   const resetToken = createToken(
@@ -194,7 +226,7 @@ const forgetPassword = async (userId: string) => {
     '10m',
   );
 
-  const resetUILink = `${config.reset_pass_ui_link}?id=${user.id}&token=${resetToken} `;
+  const resetUILink = `${config.reset_pass_ui_link}?email=${user.email}&token=${resetToken} `;
   sendEmail(user.email, resetUILink);
 
   console.log('user email:', user.email, 'reset link:', resetUILink);
