@@ -8,6 +8,7 @@ import config from '../../config';
 import { JwtPayload } from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import { sendEmail } from '../../utils/sendEmail';
+
 const signUpIntoDB = async (payload: TUser) => {
   const user = await User.findOne({ email: payload.email });
   if (user) {
@@ -17,6 +18,29 @@ const signUpIntoDB = async (payload: TUser) => {
     );
   }
 
+  // Extract the first name from the user's name (split by space and take the first part)
+  // eslint-disable-next-line prefer-const
+  let firstName = payload.name.trim().split(' ')[0].toLowerCase();
+
+  // Generate a random 4-digit number
+  const randomNum = Math.floor(1000 + Math.random() * 9000);
+
+  // Start with the base username in the format @firstname + random number
+  let username = `@${firstName}${randomNum}`; // Example: @john1234
+
+  // Check if the generated username already exists in the database
+  let usernameExists = await User.findOne({ username });
+
+  // If the username exists, keep generating new random numbers until it's unique
+  while (usernameExists) {
+    const newRandomNum = Math.floor(1000 + Math.random() * 9000);
+    username = `@${firstName}${newRandomNum}`; // Keep the @firstname format, just change the number
+    usernameExists = await User.findOne({ username });
+  }
+
+  // Add the generated username to the payload
+  payload.username = username;
+
   //create user
   const newUser = await User.create(payload);
 
@@ -25,6 +49,7 @@ const signUpIntoDB = async (payload: TUser) => {
   const jwtPayload = {
     _id: newUser._id,
     name: newUser.name,
+    username: newUser.username,
     email: newUser.email,
     role: newUser.role,
     status: newUser.status,
@@ -75,6 +100,7 @@ const logInUser = async (payload: TLoginUser) => {
   const jwtPayload = {
     _id: user._id,
     name: user.name,
+    username: user.username,
     email: user.email,
     role: user.role,
     status: user.status,
@@ -183,6 +209,7 @@ const refreshToken = async (token: string) => {
   const jwtPayload = {
     _id: user._id,
     name: user.name,
+    username: user.username,
     email: user.email,
     role: user.role,
     status: user.status,
@@ -214,6 +241,7 @@ const forgetPassword = async (email: string) => {
   const jwtPayload = {
     _id: user._id,
     name: user.name,
+    username: user.username,
     email: user.email,
     role: user.role,
     status: user.status,
@@ -229,14 +257,17 @@ const forgetPassword = async (email: string) => {
   const resetUILink = `${config.reset_pass_ui_link}?email=${user.email}&token=${resetToken} `;
   sendEmail(user.email, resetUILink);
 
-  console.log('user email:', user.email, 'reset link:', resetUILink);
+  // console.log('user email:', user.email, 'reset link:', resetUILink);
 };
 
 const resetPassword = async (
-  payload: { _id: string; newPassword: string },
+  payload: { email: string; newPassword: string },
   token: string,
 ) => {
-  const user = await User.findById(payload?._id).select('+password');
+  console.log('payload:', payload);
+  const user = await User.findOne({ email: payload?.email }).select(
+    '+password',
+  );
 
   if (!user) {
     throw new AppError(404, 'User not found');
@@ -254,8 +285,7 @@ const resetPassword = async (
   ) as JwtPayload;
 
   //check if the id is valid by comparing it with the id in the token
-  if (payload._id !== decoded._id) {
-    console.log(payload._id, decoded._id);
+  if (payload.email !== decoded.email) {
     throw new AppError(httpStatus.FORBIDDEN, 'You are forbidden!');
   }
 
@@ -267,7 +297,7 @@ const resetPassword = async (
 
   await User.findOneAndUpdate(
     {
-      _id: decoded._id,
+      email: decoded.email,
       role: decoded.role,
     },
     {
