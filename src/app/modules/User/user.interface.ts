@@ -1,5 +1,5 @@
 import { USER_Role, USER_STATUS } from './user.constant';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 
 export type TUser = {
   _id?: string;
@@ -11,6 +11,8 @@ export type TUser = {
   gender: 'Male' | 'Female' | 'Other';
   role: keyof typeof USER_Role;
   status: keyof typeof USER_STATUS;
+  follower: Types.ObjectId[];
+  following: Types.ObjectId[];
   address?: string;
   profilePhoto?: string;
   coverImg?: string;

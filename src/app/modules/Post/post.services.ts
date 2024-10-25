@@ -69,7 +69,7 @@ const createPost = async (
 };
 
 const getAllPosts = async () => {
-  const posts = await Post.find().sort({ createdAt: -1 }); // Sort by latest
+  const posts = await Post.find().sort({ createdAt: -1 }).populate('user'); // Sort by latest
   return posts;
 };
 

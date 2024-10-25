@@ -41,6 +41,11 @@ const updateUserValidationSchema = z.object({
         required_error: 'Name is required',
       })
       .optional(),
+    username: z
+      .string({
+        required_error: 'Name is required',
+      })
+      .optional(),
 
     email: z
       .string({

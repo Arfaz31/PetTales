@@ -18,25 +18,10 @@ const signUpIntoDB = async (payload: TUser) => {
     );
   }
 
-  // Extract the first name from the user's name (split by space and take the first part)
-  // eslint-disable-next-line prefer-const
-  let firstName = payload.name.trim().split(' ')[0].toLowerCase();
-
-  // Generate a random 4-digit number
-  const randomNum = Math.floor(1000 + Math.random() * 9000);
-
-  // Start with the base username in the format @firstname + random number
-  let username = `@${firstName}${randomNum}`; // Example: @john1234
-
-  // Check if the generated username already exists in the database
-  let usernameExists = await User.findOne({ username });
-
-  // If the username exists, keep generating new random numbers until it's unique
-  while (usernameExists) {
-    const newRandomNum = Math.floor(1000 + Math.random() * 9000);
-    username = `@${firstName}${newRandomNum}`; // Keep the @firstname format, just change the number
-    usernameExists = await User.findOne({ username });
-  }
+  const atIndex = payload.email.indexOf('@'); // Find the index of the "@" in the email
+  const usernameSlice = payload.email.slice(0, atIndex); // Slice the part before the "@" to get the base of the username
+  const randomDigits = Math.floor(Math.random() * 900) + 100; // Generate a 3-digit random number
+  const username = `${usernameSlice}${randomDigits}`; // Combine email part with random digits
 
   // Add the generated username to the payload
   payload.username = username;
@@ -156,7 +141,7 @@ const changePassword = async (
     user.password, //hash password
   );
   if (!passwordMatch) {
-    throw new AppError(httpStatus.FORBIDDEN, 'Password do not matched');
+    throw new AppError(httpStatus.FORBIDDEN, 'Old password is incorrect');
   }
 
   //hash new password

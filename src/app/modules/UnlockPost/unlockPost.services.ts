@@ -56,6 +56,25 @@ const accessUnlockPostViaPayment = async (
   return paymentSession;
 };
 
+const getAllUnlockPostFromDB = async (userId: string) => {
+  const user = await User.findById(userId);
+  if (!user) {
+    throw new AppError(httpStatus.NOT_FOUND, 'User not found');
+  }
+
+  const isDeleted = user?.isDeleted;
+  if (isDeleted) {
+    throw new AppError(httpStatus.FORBIDDEN, 'Your account has been deleted');
+  }
+
+  const unlockedPosts = await UnlockPost.find({
+    userId: userId,
+    paymentStatus: 'Paid',
+  }).select('postId'); // Only return postId
+  return unlockedPosts;
+};
+
 export const UnlockPostServices = {
   accessUnlockPostViaPayment,
+  getAllUnlockPostFromDB,
 };

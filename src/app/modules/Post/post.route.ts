@@ -20,7 +20,11 @@ router.post(
   PostController.createPost,
 );
 
-router.get('/', auth(USER_Role.admin), PostController.getAllPosts);
+router.get(
+  '/',
+  auth(USER_Role.admin, USER_Role.user),
+  PostController.getAllPosts,
+);
 router.get(
   '/my-posts',
   auth(USER_Role.user, USER_Role.admin),

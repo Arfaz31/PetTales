@@ -14,4 +14,10 @@ router.post(
   UnlockPostController.accessUnlockPost,
 );
 
+router.get(
+  '/',
+  auth(USER_Role.user, USER_Role.admin),
+  UnlockPostController.getUnlockedPosts,
+);
+
 export const UnlockPostRoutes = router;

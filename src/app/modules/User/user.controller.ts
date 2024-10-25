@@ -85,6 +85,29 @@ const updateUserRole = catchAsync(async (req, res) => {
   });
 });
 
+const followUser = catchAsync(async (req, res) => {
+  const { id: followingId } = req.params; // User B (user A jake follow korche )
+  const currentUserId = req.user._id; // User A (the current logged-in user)
+  const result = await UserServices.createFollow(currentUserId, followingId);
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Successfully followed the user.',
+    data: result,
+  });
+});
+const unFollowUser = catchAsync(async (req, res) => {
+  const { id: unFollowingId } = req.params; // User B (current user jake unfollow korbe )
+  const currentUserId = req.user._id; // (the current logged-in user)
+  const result = await UserServices.unFollowUser(currentUserId, unFollowingId);
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Successfully Unfollowed the user.',
+    data: result,
+  });
+});
+
 export const UserController = {
   getAllUsers,
   getMe,
@@ -92,4 +115,6 @@ export const UserController = {
   updateMyProfile,
   deleteUser,
   updateUserRole,
+  followUser,
+  unFollowUser,
 };

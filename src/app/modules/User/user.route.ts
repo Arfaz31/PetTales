@@ -12,10 +12,18 @@ import {
 
 const router = Router();
 
-router.get('/', auth(USER_Role.admin), UserController.getAllUsers);
+router.get(
+  '/',
+  auth(USER_Role.admin, USER_Role.user),
+  UserController.getAllUsers,
+);
 router.get('/me', auth(USER_Role.admin, USER_Role.user), UserController.getMe);
 
-router.get('/:id', auth(USER_Role.admin), UserController.getSingleUser);
+router.get(
+  '/:id',
+  auth(USER_Role.admin, USER_Role.user),
+  UserController.getSingleUser,
+);
 
 router.patch(
   '/update-profile',
@@ -29,5 +37,16 @@ router.patch(
 router.patch('/:id/role', auth(USER_Role.admin), UserController.updateUserRole);
 
 router.delete('/:id', auth(USER_Role.admin), UserController.deleteUser);
+
+router.patch(
+  '/follow/:id',
+  auth(USER_Role.admin, USER_Role.user),
+  UserController.followUser,
+);
+router.patch(
+  '/unfollow/:id',
+  auth(USER_Role.admin, USER_Role.user),
+  UserController.unFollowUser,
+);
 
 export const UserRoutes = router;

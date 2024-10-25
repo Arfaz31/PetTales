@@ -16,6 +16,19 @@ const accessUnlockPost = catchAsync(async (req, res) => {
   });
 });
 
+const getUnlockedPosts = catchAsync(async (req, res) => {
+  const { _id } = req.user;
+
+  const result = await UnlockPostServices.getAllUnlockPostFromDB(_id);
+  sendResponse(res, {
+    statusCode: 201,
+    success: true,
+    message: 'UnlockPosts is retrieved successfully',
+    data: result,
+  });
+});
+
 export const UnlockPostController = {
   accessUnlockPost,
+  getUnlockedPosts,
 };

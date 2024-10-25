@@ -45,6 +45,18 @@ const userSchema = new Schema<TUser, UserModel>(
       default: 'basic',
       required: true,
     },
+
+    follower: [
+      {
+        type: Schema.Types.ObjectId,
+      },
+    ],
+    following: [
+      {
+        type: Schema.Types.ObjectId,
+      },
+    ],
+
     address: {
       type: String,
     },
