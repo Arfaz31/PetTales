@@ -1,0 +1,19 @@
+NODE_ENV=development
+PORT=5000
+DATABASE_URL=mongodb+srv://PetTale-admin:ln1x5LRJhH5PgvvT@cluster0.nfzb9rp.mongodb.net/PetTale?retryWrites=true&w=majority&appName=Cluster0
+BCRYPT_SALT_ROUNDS=12
+JWT_ACCESS_SECRET=f74d4fe43c4794c826a44f0bed4a38be4f1848d85641cbc7dd0d71bf0fabf69c302272f86402aba79e26217d4a13a12c90613320fe3f86432444918746b3980c
+JWT_REFRESH_SECRET=badb14a647a13e3fd9149834cc2a8f88b23aafac27583bb1c3e3f879a98d65719289de05ff9832bcda3f82e9242e052792b52a3ff3d4c7421ef83158b4c0486b
+JWT_ACCESS_EXPIRES_IN=90d
+JWT_REFRESH_EXPIRES_IN=365d
+RESET_PASS_UI_LINK=http://localhost:3000/reset-password
+CLOUD_NAME=dnom0fr0x
+API_KEY=351944929112496
+API_SECRET=-ztXRbTsHcSz8uKHST3UAhW-YHU
+STORE_ID=aamarpaytest
+SIGNATURE_KEY=dbb74894e82415a2f7ff0ec3a97e4183
+PAYMENT_URL= https://sandbox.aamarpay.com/jsonpost.php
+PAYMENT_VERIFY_URL=https://sandbox.aamarpay.com/api/v1/trxcheck/request.php
+
+
+//generate token by this way- at first open your terminal and write node then click enter then run this command- require('crypto').randomBytes(64).toString('hex')

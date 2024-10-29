@@ -27,5 +27,15 @@ router.get(
   auth(USER_Role.user, USER_Role.admin),
   LikeController.getTotalDownvotes,
 );
+router.get(
+  '/check-post-like/:postId',
+  auth(USER_Role.user, USER_Role.admin),
+  LikeController.checkPostLike,
+);
+router.get(
+  '/check-post-dislike/:postId',
+  auth(USER_Role.user, USER_Role.admin),
+  LikeController.checkPostDislike,
+);
 
 export const LikeRoutes = router;

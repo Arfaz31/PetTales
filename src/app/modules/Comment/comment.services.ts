@@ -27,6 +27,7 @@ const updateCommentInDB = async (
   return comment;
 };
 
+//delete comment as a commenter in other post
 const deleteCommentInDB = async (commentId: string, userId: string) => {
   const comment = await Comment.findOne({ _id: commentId, user: userId });
   if (!comment) {
@@ -57,10 +58,20 @@ const deleteCommentAsPostOwner = async (
   return { success: true };
 };
 
+// const getCommentsByPostId = async (postId: string) => {
+//   const comments = await Comment.find({ post: postId })
+//     .populate('user', 'name profilePhoto')
+//     .populate('post', 'title user');
+//   return comments;
+// };
 const getCommentsByPostId = async (postId: string) => {
   const comments = await Comment.find({ post: postId })
-    .populate('user', 'name', 'profilePhoto')
-    .populate('post', 'title', 'user');
+    .populate('user', 'name profilePhoto username')
+    .populate({
+      path: 'post',
+      select: 'title user',
+      populate: { path: 'user', select: '_id' },
+    });
   return comments;
 };
 

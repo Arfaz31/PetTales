@@ -16,7 +16,7 @@ router.post(
 );
 
 // Update a comment
-router.put(
+router.patch(
   '/update-comment/:commentId',
   auth(USER_Role.admin, USER_Role.user),
   validateRequest(CommentValidation.updateCommentZodSchema),

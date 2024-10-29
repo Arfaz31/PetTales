@@ -56,9 +56,37 @@ const getTotalDownvotes = catchAsync(async (req, res) => {
   });
 });
 
+const checkPostLike = catchAsync(async (req, res) => {
+  const { _id: userId } = req.user;
+  const { postId } = req.params;
+  const result = await LikeServices.checkPostLikeFromDB(userId, postId);
+
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: 'post like is retrived successfully',
+    data: result,
+  });
+});
+const checkPostDislike = catchAsync(async (req, res) => {
+  const { _id: userId } = req.user;
+
+  const { postId } = req.params;
+  const result = await LikeServices.checkPostDisLikeFromDB(userId, postId);
+
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: 'post dislike is retrived successfully',
+    data: result,
+  });
+});
+
 export const LikeController = {
   upvotePost,
   downvotePost,
   getTotalUpvotes,
   getTotalDownvotes,
+  checkPostLike,
+  checkPostDislike,
 };

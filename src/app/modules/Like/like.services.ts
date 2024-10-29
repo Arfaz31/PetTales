@@ -138,9 +138,33 @@ const getTotalDownvotesFromDB = async (postId: string) => {
   return totalDownvotes;
 };
 
+const checkPostLikeFromDB = async (userId: string, postId: string) => {
+  // Check if there's a like from the user for the specific post
+  const like = await Like.findOne({
+    user: userId,
+    post: postId,
+    upvotes: 1, // Only check for likes
+  });
+
+  return !!like; // Return true if a like exists, false otherwise
+};
+
+const checkPostDisLikeFromDB = async (userId: string, postId: string) => {
+  // Check if there's a dislike from the user for the specific post
+  const dislike = await Like.findOne({
+    user: userId,
+    post: postId,
+    downvotes: 1, // Only check for dislikes
+  });
+
+  return !!dislike; // Return true if a dislike exists, false otherwise
+};
+
 export const LikeServices = {
   upvotePost,
   downvotePost,
   getTotalUpvotesFromDB,
   getTotalDownvotesFromDB,
+  checkPostLikeFromDB,
+  checkPostDisLikeFromDB,
 };
