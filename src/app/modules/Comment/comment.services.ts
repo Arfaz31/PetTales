@@ -6,6 +6,10 @@ import { Post } from '../Post/post.model';
 
 const createCommentIntoDB = async (payload: TComment) => {
   const result = await Comment.create(payload);
+  // Add the comment ID to the comments array in the Post document
+  await Post.findByIdAndUpdate(payload.post, {
+    $addToSet: { comments: result._id }, // Use result._id here
+  });
   return result;
 };
 
@@ -36,6 +40,9 @@ const deleteCommentInDB = async (commentId: string, userId: string) => {
       'Comment not found or unauthorized access',
     );
   }
+  await Post.findByIdAndUpdate(comment.post, {
+    $pull: { comments: comment._id },
+  });
 
   await Comment.deleteOne({ _id: commentId });
   return { success: true };
@@ -53,6 +60,9 @@ const deleteCommentAsPostOwner = async (
       'You are not the owner of this post',
     );
   }
+  await Post.findByIdAndUpdate(post._id, {
+    $pull: { comments: commentId },
+  });
 
   await Comment.deleteOne({ _id: commentId, post: postId });
   return { success: true };

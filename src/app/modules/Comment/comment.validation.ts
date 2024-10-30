@@ -9,7 +9,6 @@ const createCommentZodSchema = z.object({
 
 const updateCommentZodSchema = z.object({
   body: z.object({
-    commentId: z.string(),
     content: z.string().min(1, 'Updated content is required'),
   }),
 });

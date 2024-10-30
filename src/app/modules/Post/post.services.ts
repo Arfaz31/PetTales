@@ -69,7 +69,20 @@ const createPost = async (
 };
 
 const getAllPosts = async () => {
-  const posts = await Post.find().sort({ createdAt: -1 }).populate('user'); // Sort by latest
+  const posts = await Post.find()
+    .sort({ createdAt: -1 })
+    .populate('user', 'name profilePhoto') // Populate post user info
+    .populate({
+      path: 'comments',
+      populate: [
+        { path: 'user', select: 'name profilePhoto' }, // Populate comment user info
+        {
+          path: 'post',
+          select: 'title user',
+          populate: { path: 'user', select: '_id' }, // Populate post owner’s _id within comments
+        },
+      ],
+    });
   return posts;
 };
 

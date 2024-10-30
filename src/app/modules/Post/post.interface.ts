@@ -9,6 +9,9 @@ export type TPost = {
   category: 'Tip' | 'Story';
   contentType: 'basic' | 'premium';
   price?: number; // Price for premium posts
-  // unlockedBy?: Types.ObjectId[]; // Users who unlocked premium post
+  comments: Types.ObjectId[];
+  like: Types.ObjectId[];
+  disLike: Types.ObjectId[];
   isPublished?: boolean;
+  isUnlockedBy?: Types.ObjectId[];
 };

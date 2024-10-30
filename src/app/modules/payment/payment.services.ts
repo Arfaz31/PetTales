@@ -7,6 +7,7 @@ import AppError from '../../Error/AppError';
 import httpStatus from 'http-status';
 import { StatusUpgrade } from '../Status-Upgrade/statusUpgrade.model';
 import { User } from '../User/user.model';
+import { Post } from '../Post/post.model';
 
 const confirmationService = async (
   transactionId: string,
@@ -33,6 +34,11 @@ const confirmationService = async (
           'UnlockPost transaction not found',
         );
       }
+
+      // Add the user ID to `isUnlockedBy` in the Post document
+      await Post.findByIdAndUpdate(result.postId, {
+        $addToSet: { isUnlockedBy: result.userId }, // Avoid duplicate entries
+      });
 
       message = 'Successfully Paid!';
       description =
