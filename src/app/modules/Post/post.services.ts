@@ -89,7 +89,22 @@ const getAllPosts = async () => {
 };
 
 const getSinglePost = async (postId: string, userId: string) => {
-  const post = await Post.findById(postId).populate('user');
+  const post = await Post.findById(postId)
+    .populate('user', 'name profilePhoto')
+    .populate({
+      path: 'comments',
+      populate: [
+        { path: 'user', select: 'name profilePhoto' },
+        {
+          path: 'post',
+          select: 'title user',
+          populate: { path: 'user', select: '_id' },
+        },
+      ],
+    })
+    .populate('like', '_id name profilePhoto')
+    .populate('disLike', '_id name profilePhoto');
+
   if (!post) {
     throw new AppError(httpStatus.NOT_FOUND, 'Post not found');
   }
@@ -99,12 +114,13 @@ const getSinglePost = async (postId: string, userId: string) => {
     throw new AppError(httpStatus.NOT_FOUND, 'User not found');
   }
 
-  // Allow the post owner or an admin to access the premium post without paying
-  if (String(post.user._id) === String(userId) || user.role === 'admin') {
+  const isPostOwner = String(post.user._id) === String(userId);
+  const isAdmin = user.role === 'admin';
+
+  if (isPostOwner || isAdmin) {
     return post;
   }
 
-  // For premium posts, check if the user has already paid
   if (post.contentType === 'premium') {
     const unlockPost = await UnlockPost.findOne({
       userId: userId,
