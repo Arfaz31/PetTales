@@ -5,37 +5,24 @@ import { LikeController } from './like.controller';
 
 const router = Router();
 
-router.post(
-  '/upvote/:postId',
+router.patch(
+  '/like/:postId',
   auth(USER_Role.user, USER_Role.admin),
-  LikeController.upvotePost,
+  LikeController.likePost,
 );
-
-router.post(
-  '/downvote/:postId',
+router.patch(
+  '/unlike/:postId',
   auth(USER_Role.user, USER_Role.admin),
-  LikeController.downvotePost,
+  LikeController.unLikePost,
 );
-
-router.get(
-  '/upvotesCount/:postId',
+router.patch(
+  '/dislike/:postId',
   auth(USER_Role.user, USER_Role.admin),
-  LikeController.getTotalUpvotes,
+  LikeController.dislikePost,
 );
-router.get(
-  '/downvotesCount/:postId',
+router.patch(
+  '/undislike/:postId',
   auth(USER_Role.user, USER_Role.admin),
-  LikeController.getTotalDownvotes,
+  LikeController.unDislikePost,
 );
-router.get(
-  '/check-post-like/:postId',
-  auth(USER_Role.user, USER_Role.admin),
-  LikeController.checkPostLike,
-);
-router.get(
-  '/check-post-dislike/:postId',
-  auth(USER_Role.user, USER_Role.admin),
-  LikeController.checkPostDislike,
-);
-
 export const LikeRoutes = router;

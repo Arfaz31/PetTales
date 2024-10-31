@@ -82,7 +82,9 @@ const getAllPosts = async () => {
           populate: { path: 'user', select: '_id' }, // Populate post owner’s _id within comments
         },
       ],
-    });
+    })
+    .populate('like', '_id name profilePhoto') // Populate user info in each like
+    .populate('disLike', '_id name profilePhoto'); // Populate user info in each dislike
   return posts;
 };
 

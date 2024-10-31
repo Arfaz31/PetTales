@@ -2,91 +2,94 @@ import catchAsync from '../../utils/catchAsync';
 import sendResponse from '../../utils/sendResponse';
 import { LikeServices } from './like.services';
 
-const upvotePost = catchAsync(async (req, res) => {
-  const { status, _id } = req.user; // Get user status and ID from request
-  const { postId } = req.params; // Extract postId from request params
+// const upvotePost = catchAsync(async (req, res) => {
+//   const { status, _id } = req.user; // Get user status and ID from request
+//   const { postId } = req.params; // Extract postId from request params
 
-  const result = await LikeServices.upvotePost(postId, _id, status); // Call service with postId
+//   const upvoteCount = await LikeServices.upvotePost(postId, _id, status); // Call service with postId
 
-  sendResponse(res, {
-    statusCode: 200,
-    success: true,
-    message:
-      (result.upvotes ?? 0 > 0) ? 'Successfully upvoted' : 'Upvote removed',
-    data: result,
-  });
-});
+//   sendResponse(res, {
+//     statusCode: 200,
+//     success: true,
+//     message: (upvoteCount ?? 0 > 0) ? 'Successfully upvoted' : 'Upvote removed',
+//     data: { upvoteCount },
+//   });
+// });
 
-const downvotePost = catchAsync(async (req, res) => {
+// const downvotePost = catchAsync(async (req, res) => {
+//   const { status, _id } = req.user;
+//   const { postId } = req.params;
+
+//   const downvoteCount = await LikeServices.downvotePost(postId, _id, status);
+
+//   sendResponse(res, {
+//     statusCode: 200,
+//     success: true,
+//     message:
+//       (downvoteCount ?? 0 > 0) ? 'Successfully downvoted' : 'Downvote removed',
+//     data: { downvoteCount },
+//   });
+// });
+
+const likePost = catchAsync(async (req, res) => {
   const { status, _id } = req.user;
   const { postId } = req.params;
 
-  const result = await LikeServices.downvotePost(postId, _id, status);
+  const likeCount = await LikeServices.likePost(postId, _id, status);
 
   sendResponse(res, {
     statusCode: 200,
     success: true,
-    message: 'Successfully downvoted',
-    data: result,
+    message: 'Successfully liked',
+    data: { likeCount },
   });
 });
 
-const getTotalUpvotes = catchAsync(async (req, res) => {
-  const { postId } = req.params; // Get postId from request params
-  const totalUpvotesCount = await LikeServices.getTotalUpvotesFromDB(postId);
-
-  sendResponse(res, {
-    statusCode: 200,
-    success: true,
-    message: 'Total upvotes count fetched successfully',
-    data: totalUpvotesCount,
-  });
-});
-
-const getTotalDownvotes = catchAsync(async (req, res) => {
+const dislikePost = catchAsync(async (req, res) => {
+  const { status, _id } = req.user;
   const { postId } = req.params;
-  const totalDownvotesCount =
-    await LikeServices.getTotalDownvotesFromDB(postId);
+
+  const dislikeCount = await LikeServices.dislikePost(postId, _id, status);
 
   sendResponse(res, {
     statusCode: 200,
     success: true,
-    message: 'Total downvotes count fetched successfully',
-    data: totalDownvotesCount,
+    message: 'Successfully disliked',
+    data: { dislikeCount },
   });
 });
 
-const checkPostLike = catchAsync(async (req, res) => {
-  const { _id: userId } = req.user;
+const unLikePost = catchAsync(async (req, res) => {
+  const { _id } = req.user;
   const { postId } = req.params;
-  const result = await LikeServices.checkPostLikeFromDB(userId, postId);
+
+  const likeCount = await LikeServices.unLikePost(postId, _id);
 
   sendResponse(res, {
     statusCode: 200,
     success: true,
-    message: 'post like is retrived successfully',
-    data: result,
+    message: 'Like removed',
+    data: { likeCount },
   });
 });
-const checkPostDislike = catchAsync(async (req, res) => {
-  const { _id: userId } = req.user;
 
+const unDislikePost = catchAsync(async (req, res) => {
+  const { _id } = req.user;
   const { postId } = req.params;
-  const result = await LikeServices.checkPostDisLikeFromDB(userId, postId);
+
+  const dislikeCount = await LikeServices.unDislikePost(postId, _id);
 
   sendResponse(res, {
     statusCode: 200,
     success: true,
-    message: 'post dislike is retrived successfully',
-    data: result,
+    message: 'Dislike removed',
+    data: { dislikeCount },
   });
 });
 
 export const LikeController = {
-  upvotePost,
-  downvotePost,
-  getTotalUpvotes,
-  getTotalDownvotes,
-  checkPostLike,
-  checkPostDislike,
+  likePost,
+  dislikePost,
+  unLikePost,
+  unDislikePost,
 };

@@ -24,7 +24,7 @@ const moduleRoutes = [
     route: PostRoutes,
   },
   {
-    path: '/like',
+    path: '/postAction',
     route: LikeRoutes,
   },
   {

@@ -42,8 +42,9 @@ const postSchema = new Schema<TPost>(
         ref: 'Comment',
       },
     ],
-    like: [{ type: Schema.Types.ObjectId, ref: 'User' }], // Array of users who liked the post
-    disLike: [{ type: Schema.Types.ObjectId, ref: 'User' }], // Array of users who disliked the post
+
+    like: [{ type: Schema.Types.ObjectId, ref: 'User' }], // References users who upvoted
+    disLike: [{ type: Schema.Types.ObjectId, ref: 'User' }], // References users who downvoted
 
     isPublished: {
       type: Boolean,
