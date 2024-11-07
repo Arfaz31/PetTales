@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-const MAX_UPLOAD_SIZE = 1024 * 1024 * 5; // 5MB
+const MAX_UPLOAD_SIZE = 1024 * 1024 * 30; // 30mb
 const ACCEPTED_FILE_TYPES = [
   'image/png',
   'image/jpeg',
@@ -26,7 +26,10 @@ const ImageFileZodSchema = z.object({
 });
 
 export const ImageFilesArrayZodSchema = z.object({
-  files: z.record(z.string(), z.array(ImageFileZodSchema)).refine((files) => {
-    return Object.keys(files).length > 0;
-  }, 'Image is required'),
+  // files: z.record(z.string(), z.array(ImageFileZodSchema)).refine((files) => {
+  //   return Object.keys(files).length > 0;
+  // }, 'Image is required'),
+  files: z.record(z.string(), z.array(ImageFileZodSchema)).optional(), // Mark files as optional
 });
+
+//The refine method allows you to create custom validation rules. Without the refine, the schema would simply check if the files field exists, but it wouldn't verify if it contains any actual files. This refinement ensures that at least one file is uploaded. If no files are provided, it will trigger the custom error message 'Image is required'.

@@ -37,12 +37,12 @@ const createPost = async (
 
   const { postImages } = images;
 
-  if (!postImages || postImages.length === 0) {
-    throw new AppError(
-      httpStatus.BAD_REQUEST,
-      'No images uploaded. Please upload images.',
-    );
-  }
+  // if (!postImages || postImages.length === 0) {
+  //   throw new AppError(
+  //     httpStatus.BAD_REQUEST,
+  //     'No images uploaded. Please upload images.',
+  //   );
+  // }
   // Logging the postImages array to check what files multer receives
   //   console.log(
   //     'Received post images:',
@@ -50,19 +50,34 @@ const createPost = async (
   //   );
 
   //Uploads each image to Cloudinary using Promise.all to handle multiple asynchronous uploads.
-  const uploadedImages = await Promise.all(
-    postImages.map((image, index) => {
-      // Log the image being uploaded
-      //   console.log(`Uploading image ${index + 1}: ${image.path}`);
-      return sendImageToCloudinary(
-        `${userId}_postImage_${index + 1}`,
-        image.path,
-      );
-    }),
-  );
+  // const uploadedImages = await Promise.all(
+  //   postImages.map((image, index) => {
+  //     // Log the image being uploaded
+  //     //   console.log(`Uploading image ${index + 1}: ${image.path}`);
+  //     return sendImageToCloudinary(
+  //       `${userId}_postImage_${index + 1}`,
+  //       image.path,
+  //     );
+  //   }),
+  // );
 
-  // Map the uploaded image URLs to payload
-  payload.images = uploadedImages.map((img) => img.secure_url as string);
+  // If no images were uploaded, proceed without uploading any images
+  if (!postImages || postImages.length === 0) {
+    payload.images = []; // Set images as an empty array or handle it accordingly
+  } else {
+    // Uploads each image to Cloudinary using Promise.all to handle multiple asynchronous uploads.
+    const uploadedImages = await Promise.all(
+      postImages.map((image, index) => {
+        return sendImageToCloudinary(
+          `${userId}_postImage_${index + 1}`,
+          image.path,
+        );
+      }),
+    );
+
+    // Map the uploaded image URLs to payload
+    payload.images = uploadedImages.map((img) => img.secure_url as string);
+  }
 
   const post = await Post.create({ ...payload, user: userId });
   return post;
@@ -140,7 +155,22 @@ const getSinglePost = async (postId: string, userId: string) => {
 };
 
 const getMyAllPosts = async (userId: string) => {
-  const posts = await Post.find({ user: userId }).sort({ createdAt: -1 }); // Sort by latest
+  const posts = await Post.find({ user: userId })
+    .sort({ createdAt: -1 })
+    .populate('user', 'name profilePhoto')
+    .populate({
+      path: 'comments',
+      populate: [
+        { path: 'user', select: 'name profilePhoto' },
+        {
+          path: 'post',
+          select: 'title user',
+          populate: { path: 'user', select: '_id' },
+        },
+      ],
+    })
+    .populate('like', '_id name profilePhoto')
+    .populate('disLike', '_id name profilePhoto');
   return posts;
 };
 

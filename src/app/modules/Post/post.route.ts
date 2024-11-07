@@ -26,7 +26,7 @@ router.get(
   PostController.getAllPosts,
 );
 router.get(
-  '/my-posts',
+  '/my-posts/:id',
   auth(USER_Role.user, USER_Role.admin),
   PostController.getMyAllPosts,
 );
@@ -60,7 +60,7 @@ router.patch(
 );
 
 router.delete(
-  '/:id',
+  '/delete/:id',
   auth(USER_Role.user, USER_Role.admin),
   PostController.deletePost,
 );
