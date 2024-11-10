@@ -18,6 +18,7 @@ const confirmationService = async (
 
   let message = '';
   let description = '';
+  let redirectUrl = 'http://localhost:3000/';
 
   if (verifyResponse && verifyResponse.pay_status === 'Successful') {
     if (paymentType === 'unlockPost') {
@@ -40,6 +41,7 @@ const confirmationService = async (
         $addToSet: { isUnlockedBy: result.userId }, // Avoid duplicate entries
       });
 
+      redirectUrl = `http://localhost:3000/newsfeed/posts/${result.postId}`;
       message = 'Successfully Paid!';
       description =
         'Your payment was successful! You can now access your content.';
@@ -58,14 +60,15 @@ const confirmationService = async (
         );
       }
       const user = await User.findById(upgrade.userId).select('+password');
-      console.log('Before saving:', user?.password);
+      // console.log('Before saving:', user?.password);
 
       if (user) {
         user.status = 'premium';
         await user.save();
-        console.log('After saving:', user.password);
+        // console.log('After saving:', user.password);
       }
 
+      redirectUrl = `http://localhost:3000/newsfeed/userprofile/${upgrade.userId}`;
       message = 'Successfully upgraded to premium!';
       description = 'Your account has been upgraded to premium status.';
     }
@@ -81,7 +84,8 @@ const confirmationService = async (
   // Replace placeholders with actual values
   template = template
     .replace('{{message}}', message)
-    .replace('{{description}}', description);
+    .replace('{{description}}', description)
+    .replace('{{redirectUrl}}', redirectUrl); // Set the dynamic URL
 
   return template;
 };

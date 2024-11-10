@@ -3,6 +3,7 @@ import sendResponse from '../../utils/sendResponse';
 import { StatusUpgradeServices } from './statusUpgrade.services';
 
 const userStatusUpgrade = catchAsync(async (req, res) => {
+  // console.log('Received request body:', req.body);
   const { _id, status } = req.user;
   const result = await StatusUpgradeServices.PayForStatusUpgrade(
     _id,

@@ -31,32 +31,29 @@ const signUpIntoDB = async (payload: TUser) => {
 
   //create token and sent to the  client
 
-  const jwtPayload = {
-    _id: newUser._id,
-    name: newUser.name,
-    username: newUser.username,
-    email: newUser.email,
-    role: newUser.role,
-    status: newUser.status,
-    profilePhoto: newUser.profilePhoto,
-  };
+  // const jwtPayload = {
+  //   _id: newUser._id,
+  //   name: newUser.name,
+  //   username: newUser.username,
+  //   email: newUser.email,
+  //   role: newUser.role,
+  //   status: newUser.status,
+  //   profilePhoto: newUser.profilePhoto,
+  // };
 
-  const accessToken = createToken(
-    jwtPayload,
-    config.jwt_access_secret as string,
-    config.jwt_access_expire_in as string,
-  );
+  // const accessToken = createToken(
+  //   jwtPayload,
+  //   config.jwt_access_secret as string,
+  //   config.jwt_access_expire_in as string,
+  // );
 
-  const refreshToken = createToken(
-    jwtPayload,
-    config.jwt_refresh_secret as string,
-    config.jwt_refresh_expire_in as string,
-  );
+  // const refreshToken = createToken(
+  //   jwtPayload,
+  //   config.jwt_refresh_secret as string,
+  //   config.jwt_refresh_expire_in as string,
+  // );
 
-  return {
-    accessToken,
-    refreshToken,
-  };
+  return newUser;
 };
 
 const logInUser = async (payload: TLoginUser) => {
