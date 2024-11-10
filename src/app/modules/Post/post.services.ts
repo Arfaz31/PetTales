@@ -83,9 +83,55 @@ const createPost = async (
   return post;
 };
 
-const getAllPosts = async () => {
-  const posts = await Post.find()
-    .sort({ createdAt: -1 })
+const getAllPosts = async (query: Record<string, unknown>) => {
+  const queryObj = { ...query };
+
+  const postSearchableFields = ['title', 'content'];
+  let searchTerm = '';
+
+  if (query?.searchTerm) {
+    searchTerm = query?.searchTerm as string;
+  }
+
+  const searchQuery = Post.find({
+    $or: postSearchableFields.map((field) => ({
+      [field]: { $regex: searchTerm, $options: 'i' },
+    })),
+  });
+
+  const limit: number = Number(query?.limit || 8);
+  let skip: number = 0;
+
+  if (query?.page) {
+    const page: number = Number(query?.page || 1);
+    skip = (page - 1) * limit;
+  }
+
+  const skipQuery = searchQuery.skip(skip);
+  const limitQuery = skipQuery.limit(limit);
+
+  const sortBy = '-createdAt';
+
+  const sortQuery = limitQuery.sort(sortBy);
+
+  // Add category filter only if a specific category is selected
+  let categoryQuery = {};
+  if (query?.category && query.category !== 'All Posts') {
+    categoryQuery = { category: query.category };
+  }
+
+  const excludeFields = ['searchTerm', 'sortBy', 'limit', 'page', 'category'];
+  excludeFields.forEach((el) => delete queryObj[el]);
+
+  const combinedQuery = {
+    ...queryObj,
+    ...categoryQuery,
+  };
+
+  // console.log('Combined Query:', combinedQuery);
+
+  const posts = await sortQuery
+    .find(combinedQuery)
     .populate('user', 'name profilePhoto') // Populate post user info
     .populate({
       path: 'comments',
@@ -100,7 +146,12 @@ const getAllPosts = async () => {
     })
     .populate('like', '_id name profilePhoto') // Populate user info in each like
     .populate('disLike', '_id name profilePhoto'); // Populate user info in each dislike
-  return posts;
+
+  // Get the total count of posts for pagination
+  const totalPosts = await Post.countDocuments(combinedQuery);
+  const hasMore = skip + limit < totalPosts;
+  const totalPages = Math.ceil(totalPosts / limit);
+  return { posts, hasMore, totalPages };
 };
 
 const getSinglePost = async (postId: string, userId: string) => {

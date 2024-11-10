@@ -28,7 +28,7 @@ const createPost = catchAsync(async (req, res) => {
 });
 
 const getAllPosts = catchAsync(async (req, res) => {
-  const result = await PostServices.getAllPosts();
+  const result = await PostServices.getAllPosts(req.query);
   sendResponse(res, {
     statusCode: 200,
     success: true,
