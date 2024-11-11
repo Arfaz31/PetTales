@@ -132,7 +132,7 @@ const getAllPosts = async (query: Record<string, unknown>) => {
 
   const posts = await sortQuery
     .find(combinedQuery)
-    .populate('user', 'name profilePhoto') // Populate post user info
+    .populate('user', '_id name username profilePhoto status coverImg') // Populate post user info
     .populate({
       path: 'comments',
       populate: [
