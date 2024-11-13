@@ -53,12 +53,47 @@ const getSinglePost = catchAsync(async (req, res) => {
 const getMyAllPosts = catchAsync(async (req, res) => {
   // const userId = req.user._id;
   const { id } = req.params;
-  const result = await PostServices.getMyAllPosts(id);
+  const result = await PostServices.getMyAllPosts(id, req.query);
 
   sendResponse(res, {
     statusCode: 200,
     success: true,
     message: 'Your posts retrieved successfully',
+    data: result,
+  });
+});
+
+const MyAllPremiumPostCount = catchAsync(async (req, res) => {
+  const userId = req.user._id;
+  const result = await PostServices.getMyAllPremiumPostCount(userId);
+
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: 'Premium post count retrieved successfully',
+    data: result,
+  });
+});
+const myUnlockPosts = catchAsync(async (req, res) => {
+  const userId = req.user._id;
+  const result = await PostServices.myUnlockPost(userId);
+
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: 'My unlock posts are retrieved successfully',
+    data: result,
+  });
+});
+
+const getUnlockingUsersAndEarnings = catchAsync(async (req, res) => {
+  const { _id } = req.user;
+  const result = await PostServices.getThoseUserWhoUnlockMyPost(_id);
+
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: 'Fetched users who unlocked premium posts and total earnings',
     data: result,
   });
 });
@@ -125,6 +160,9 @@ export const PostController = {
   getAllPosts,
   getSinglePost,
   getMyAllPosts,
+  myUnlockPosts,
+  MyAllPremiumPostCount,
+  getUnlockingUsersAndEarnings,
   updateMyPost,
   deletePost,
   unpublishPost,

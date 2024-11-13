@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import AppError from '../../Error/AppError';
 import { TImageFiles } from '../../Interface/image.interface';
 import { sendImageToCloudinary } from '../../utils/sendingImageToCloudinary';
@@ -156,7 +158,7 @@ const getAllPosts = async (query: Record<string, unknown>) => {
 
 const getSinglePost = async (postId: string, userId: string) => {
   const post = await Post.findById(postId)
-    .populate('user', 'name profilePhoto')
+    .populate('user', '_id name username profilePhoto status coverImg')
     .populate({
       path: 'comments',
       populate: [
@@ -205,10 +207,68 @@ const getSinglePost = async (postId: string, userId: string) => {
   return post;
 };
 
-const getMyAllPosts = async (userId: string) => {
-  const posts = await Post.find({ user: userId })
+const getMyAllPosts = async (
+  userId: string,
+  query: Record<string, unknown>,
+) => {
+  const queryObj = { ...query };
+
+  const postSearchableFields = ['title', 'content'];
+  let searchTerm = '';
+  if (query?.searchTerm) {
+    searchTerm = query?.searchTerm as string;
+  }
+
+  const searchQuery = Post.find({
+    $or: postSearchableFields.map((field) => ({
+      [field]: { $regex: searchTerm, $options: 'i' },
+    })),
+  });
+
+  const limit: number = Number(query?.limit || 8);
+  let skip: number = 0;
+  if (query?.page) {
+    const page: number = Number(query?.page || 1);
+    skip = (page - 1) * limit;
+  }
+
+  const skipQuery = searchQuery.skip(skip);
+  const limitQuery = skipQuery.limit(limit);
+
+  const sortBy = '-createdAt';
+
+  const sortQuery = limitQuery.sort(sortBy);
+
+  let categoryQuery = {};
+  if (query?.category && query.category !== 'All Posts') {
+    categoryQuery = { category: query.category };
+  }
+  let contentTypeQuery = {};
+  if (query?.contentType && query.contentType !== 'All Content') {
+    contentTypeQuery = { contentType: query.contentType };
+  }
+
+  const excludeFields = [
+    'searchTerm',
+    'sortBy',
+    'limit',
+    'page',
+    'category',
+    'contentType',
+  ];
+  excludeFields.forEach((el) => delete queryObj[el]);
+
+  const combinedQuery = {
+    user: userId,
+    ...queryObj,
+    ...categoryQuery,
+    ...contentTypeQuery,
+  };
+
+  const posts = await sortQuery
+    .find(combinedQuery)
     .sort({ createdAt: -1 })
-    .populate('user', 'name profilePhoto')
+    .populate('user', '_id name username profilePhoto status coverImg')
     .populate({
       path: 'comments',
       populate: [
@@ -222,7 +282,68 @@ const getMyAllPosts = async (userId: string) => {
     })
     .populate('like', '_id name profilePhoto')
     .populate('disLike', '_id name profilePhoto');
-  return posts;
+
+  const totalPosts = await Post.countDocuments(combinedQuery);
+  const totalPages = Math.ceil(totalPosts / limit);
+
+  return {
+    posts,
+    totalPages,
+  };
+};
+
+const getMyAllPremiumPostCount = async (userId: string) => {
+  const count = await Post.countDocuments({
+    user: userId,
+    contentType: 'premium',
+  });
+  return count;
+};
+
+const getThoseUserWhoUnlockMyPost = async (userId: string) => {
+  // Step 1: Find all premium posts created by the current user
+  const premiumPosts = await Post.find({
+    user: userId,
+    contentType: 'premium',
+  }).select('_id');
+
+  //premiumPosts is an array of premium post ids
+  const premiumPostIds = premiumPosts.map((post) => post._id);
+
+  // Step 2: Find all unlock records for these premium posts with a "Paid" status
+  const unlockRecords = await UnlockPost.find({
+    postId: { $in: premiumPostIds },
+    paymentStatus: 'Paid',
+  })
+    .populate('userId', 'name email profilePhoto')
+    .populate('postId', 'title category images price');
+
+  // Step 3: Calculate total earnings from these unlock records
+  const totalEarnings = unlockRecords.reduce(
+    (sum, record) => sum + record.amount,
+    0,
+  );
+
+  return {
+    totalEarnings,
+    unlockRecords,
+  };
+};
+
+const myUnlockPost = async (userId: string) => {
+  const myUnlockPostRecords = await UnlockPost.find({
+    userId: userId,
+    paymentStatus: 'Paid',
+  }).populate({
+    path: 'postId',
+    select: 'title category images price user', // Select the fields you need within postId
+    populate: {
+      path: 'user', // Populate the user field within postId
+      select: 'name profilePhoto', // Select the fields you need from the user
+    },
+  });
+
+  return myUnlockPostRecords;
 };
 
 const updateMyPost = async (
@@ -334,6 +455,9 @@ export const PostServices = {
   getAllPosts,
   getSinglePost,
   getMyAllPosts,
+  getMyAllPremiumPostCount,
+  getThoseUserWhoUnlockMyPost,
+  myUnlockPost,
   updateMyPost,
   deletePostFromDB,
   unpublishPost,
