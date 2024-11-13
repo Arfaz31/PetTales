@@ -7,7 +7,7 @@ import { UnlockPost } from '../UnlockPost/unlockPost.model';
 import { User } from '../User/user.model';
 import { TPost } from './post.interface';
 import { Post } from './post.model';
-
+import { v4 as uuidv4 } from 'uuid';
 import httpStatus from 'http-status';
 
 const createPost = async (
@@ -39,41 +39,14 @@ const createPost = async (
 
   const { postImages } = images;
 
-  // if (!postImages || postImages.length === 0) {
-  //   throw new AppError(
-  //     httpStatus.BAD_REQUEST,
-  //     'No images uploaded. Please upload images.',
-  //   );
-  // }
-  // Logging the postImages array to check what files multer receives
-  //   console.log(
-  //     'Received post images:',
-  //     postImages.map((img) => img.path),
-  //   );
-
-  //Uploads each image to Cloudinary using Promise.all to handle multiple asynchronous uploads.
-  // const uploadedImages = await Promise.all(
-  //   postImages.map((image, index) => {
-  //     // Log the image being uploaded
-  //     //   console.log(`Uploading image ${index + 1}: ${image.path}`);
-  //     return sendImageToCloudinary(
-  //       `${userId}_postImage_${index + 1}`,
-  //       image.path,
-  //     );
-  //   }),
-  // );
-
   // If no images were uploaded, proceed without uploading any images
   if (!postImages || postImages.length === 0) {
     payload.images = []; // Set images as an empty array or handle it accordingly
   } else {
     // Uploads each image to Cloudinary using Promise.all to handle multiple asynchronous uploads.
     const uploadedImages = await Promise.all(
-      postImages.map((image, index) => {
-        return sendImageToCloudinary(
-          `${userId}_postImage_${index + 1}`,
-          image.path,
-        );
+      postImages.map((image) => {
+        return sendImageToCloudinary(`postImage_${uuidv4()}`, image.path);
       }),
     );
 
@@ -375,8 +348,8 @@ const updateMyPost = async (
 
   // Upload images to Cloudinary and map the URLs to `uploadedImages`
   const uploadedImages = await Promise.all(
-    postImages.map((image, index) =>
-      sendImageToCloudinary(`${userId}_postImage_${index + 1}`, image.path),
+    postImages.map((image) =>
+      sendImageToCloudinary(`postImage_${uuidv4()}`, image.path),
     ),
   );
 
