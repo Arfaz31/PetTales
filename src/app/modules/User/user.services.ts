@@ -8,8 +8,24 @@ import { TImageFile } from '../../Interface/image.interface';
 import { sendImageToCloudinary } from '../../utils/sendingImageToCloudinary';
 import mongoose from 'mongoose';
 
-const getAllUsersFromDB = async () => {
-  const result = await User.find();
+const getAllUsersFromDB = async (query: Record<string, unknown>) => {
+  let userStatusQuery = {};
+  if (query?.status && query.status !== 'All users') {
+    userStatusQuery = { status: query.status };
+  }
+  let userRoleQuery = {};
+  if (query?.role && query.role !== 'All users') {
+    userRoleQuery = { role: query.role };
+  }
+
+  const combinedQuery = { ...userStatusQuery, ...userRoleQuery };
+
+  const result = await User.find(combinedQuery);
+  return result;
+};
+
+const getTotalPremiumUserCount = async () => {
+  const result = await User.countDocuments({ role: 'user', status: 'premium' });
   return result;
 };
 
@@ -226,4 +242,5 @@ export const UserServices = {
   updateUserRoleIntoDB,
   createFollow,
   unFollowUser,
+  getTotalPremiumUserCount,
 };

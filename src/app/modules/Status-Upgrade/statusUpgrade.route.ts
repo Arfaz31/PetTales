@@ -14,4 +14,15 @@ router.post(
   StatusUpgradeController.userStatusUpgrade,
 );
 
+router.get(
+  '/allVerifiedUsers',
+  auth(USER_Role.admin),
+  StatusUpgradeController.getAllStatusUpgradeUsers,
+);
+router.get(
+  '/totalIncomeOfWebsite',
+  auth(USER_Role.admin),
+  StatusUpgradeController.getTotalWebsiteIncome,
+);
+
 export const StatusUpgradeRoutes = router;

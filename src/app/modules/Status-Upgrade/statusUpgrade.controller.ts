@@ -18,6 +18,28 @@ const userStatusUpgrade = catchAsync(async (req, res) => {
   });
 });
 
+const getAllStatusUpgradeUsers = catchAsync(async (req, res) => {
+  const result = await StatusUpgradeServices.getAllStausUpgradeUsers();
+  sendResponse(res, {
+    statusCode: 201,
+    success: true,
+    message: 'All upgraded users retrieved successfully',
+    data: result,
+  });
+});
+
+const getTotalWebsiteIncome = catchAsync(async (req, res) => {
+  const result = await StatusUpgradeServices.getTotalIncomeOfWebsite();
+  sendResponse(res, {
+    statusCode: 201,
+    success: true,
+    message: 'Total income retrieved successfully',
+    data: result,
+  });
+});
+
 export const StatusUpgradeController = {
   userStatusUpgrade,
+  getAllStatusUpgradeUsers,
+  getTotalWebsiteIncome,
 };

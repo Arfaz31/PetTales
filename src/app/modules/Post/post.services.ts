@@ -99,6 +99,7 @@ const getAllPosts = async (query: Record<string, unknown>) => {
   excludeFields.forEach((el) => delete queryObj[el]);
 
   const combinedQuery = {
+    isPublished: true,
     ...queryObj,
     ...categoryQuery,
   };

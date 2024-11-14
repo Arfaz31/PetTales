@@ -54,6 +54,22 @@ const PayForStatusUpgrade = async (
   return paymentSession;
 };
 
+const getAllStausUpgradeUsers = async () => {
+  const result = await StatusUpgrade.find();
+  return result;
+};
+
+const getTotalIncomeOfWebsite = async () => {
+  const premiumUsers = await StatusUpgrade.find({ paymentStatus: 'Paid' });
+  const totalIncome = premiumUsers.reduce(
+    (total, user) => total + user.amount,
+    0,
+  );
+  return totalIncome;
+};
+
 export const StatusUpgradeServices = {
   PayForStatusUpgrade,
+  getAllStausUpgradeUsers,
+  getTotalIncomeOfWebsite,
 };

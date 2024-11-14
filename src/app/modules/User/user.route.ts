@@ -18,6 +18,11 @@ router.get(
   UserController.getAllUsers,
 );
 router.get('/me', auth(USER_Role.admin, USER_Role.user), UserController.getMe);
+router.get(
+  '/getAllPremiumUsersCount',
+  auth(USER_Role.admin),
+  UserController.getAllPremiumUsersCount,
+);
 
 router.get(
   '/:id',

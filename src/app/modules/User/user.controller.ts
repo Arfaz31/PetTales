@@ -5,7 +5,7 @@ import { UserServices } from './user.services';
 // import { TImageFile } from '../../Interface/image.interface';
 
 const getAllUsers = catchAsync(async (req, res) => {
-  const result = await UserServices.getAllUsersFromDB();
+  const result = await UserServices.getAllUsersFromDB(req.query);
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
@@ -23,6 +23,16 @@ const getMe = catchAsync(async (req, res) => {
     statusCode: httpStatus.OK,
     success: true,
     message: `${role} profile is retrieved succesfully`,
+    data: result,
+  });
+});
+const getAllPremiumUsersCount = catchAsync(async (req, res) => {
+  const result = await UserServices.getTotalPremiumUserCount();
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: `Premium user profile is retrieved succesfully`,
     data: result,
   });
 });
@@ -111,6 +121,7 @@ const unFollowUser = catchAsync(async (req, res) => {
 export const UserController = {
   getAllUsers,
   getMe,
+  getAllPremiumUsersCount,
   getSingleUser,
   updateMyProfile,
   deleteUser,
