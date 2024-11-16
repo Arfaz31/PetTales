@@ -108,8 +108,8 @@ const updateUserRoleIntoDB = async (
   }
 
   const updatedUserRole = await User.findOneAndUpdate(
-    { id },
-    { $set: payload },
+    { _id: id },
+    { role: payload.role },
     {
       new: true,
       runValidators: true,

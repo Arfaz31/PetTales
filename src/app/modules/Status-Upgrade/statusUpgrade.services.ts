@@ -55,7 +55,10 @@ const PayForStatusUpgrade = async (
 };
 
 const getAllStausUpgradeUsers = async () => {
-  const result = await StatusUpgrade.find();
+  const result = await StatusUpgrade.find().populate(
+    'userId',
+    'name username email mobileNumber gender profilePhoto',
+  );
   return result;
 };
 

@@ -95,13 +95,26 @@ const getAllPosts = async (query: Record<string, unknown>) => {
     categoryQuery = { category: query.category };
   }
 
-  const excludeFields = ['searchTerm', 'sortBy', 'limit', 'page', 'category'];
+  let contentTypeQuery = {};
+  if (query?.contentType && query.contentType !== 'All Content') {
+    contentTypeQuery = { contentType: query.contentType };
+  }
+
+  const excludeFields = [
+    'searchTerm',
+    'sortBy',
+    'limit',
+    'page',
+    'category',
+    'contentType',
+  ];
   excludeFields.forEach((el) => delete queryObj[el]);
 
   const combinedQuery = {
     isPublished: true,
     ...queryObj,
     ...categoryQuery,
+    ...contentTypeQuery,
   };
 
   // console.log('Combined Query:', combinedQuery);
@@ -127,7 +140,7 @@ const getAllPosts = async (query: Record<string, unknown>) => {
   const totalPosts = await Post.countDocuments(combinedQuery);
   const hasMore = skip + limit < totalPosts;
   const totalPages = Math.ceil(totalPosts / limit);
-  return { posts, hasMore, totalPages };
+  return { posts, hasMore, totalPosts, totalPages };
 };
 
 const getSinglePost = async (postId: string, userId: string) => {

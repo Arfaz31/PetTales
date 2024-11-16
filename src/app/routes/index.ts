@@ -7,6 +7,7 @@ import { CommentRoutes } from '../modules/Comment/comment.route';
 import { paymentRoutes } from '../modules/payment/payment.route';
 import { UnlockPostRoutes } from '../modules/UnlockPost/unlockPost.route';
 import { StatusUpgradeRoutes } from '../modules/Status-Upgrade/statusUpgrade.route';
+import { AdminRoutes } from '../modules/Admin/admin.route';
 
 const router = Router();
 
@@ -18,6 +19,10 @@ const moduleRoutes = [
   {
     path: '/user',
     route: UserRoutes,
+  },
+  {
+    path: '/admin',
+    route: AdminRoutes,
   },
   {
     path: '/posts',
