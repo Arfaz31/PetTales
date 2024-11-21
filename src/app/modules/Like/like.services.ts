@@ -12,15 +12,16 @@ export const likePost = async (
 ) => {
   const post = await Post.findById(postId);
   if (!post) throw new AppError(httpStatus.NOT_FOUND, 'Post not found');
+  const userObjectId = new Types.ObjectId(userId);
+  const isUnlocked = post.isUnlockedBy?.includes(userObjectId);
 
-  if (post.contentType === 'premium' && status === 'basic') {
+  if (post.contentType === 'premium' && status === 'basic' && !isUnlocked) {
     throw new AppError(
       httpStatus.FORBIDDEN,
       'Basic users cannot like premium content',
     );
   }
 
-  const userObjectId = new Types.ObjectId(userId);
   // Add like, remove dislike if present
   const updatedPost = await Post.findByIdAndUpdate(
     postId,
@@ -43,14 +44,15 @@ export const dislikePost = async (
   const post = await Post.findById(postId);
   if (!post) throw new AppError(httpStatus.NOT_FOUND, 'Post not found');
 
-  if (post.contentType === 'premium' && status === 'basic') {
+  const userObjectId = new Types.ObjectId(userId);
+  const isUnlocked = post.isUnlockedBy?.includes(userObjectId);
+  if (post.contentType === 'premium' && status === 'basic' && !isUnlocked) {
     throw new AppError(
       httpStatus.FORBIDDEN,
       'Basic users cannot dislike premium content',
     );
   }
 
-  const userObjectId = new Types.ObjectId(userId);
   // Add dislike, remove like if present
   const updatedPost = await Post.findByIdAndUpdate(
     postId,

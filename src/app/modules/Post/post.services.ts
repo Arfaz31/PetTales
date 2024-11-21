@@ -2,12 +2,10 @@
 
 import AppError from '../../Error/AppError';
 import { TImageFiles } from '../../Interface/image.interface';
-import { sendImageToCloudinary } from '../../utils/sendingImageToCloudinary';
 import { UnlockPost } from '../UnlockPost/unlockPost.model';
 import { User } from '../User/user.model';
 import { TPost } from './post.interface';
 import { Post } from './post.model';
-import { v4 as uuidv4 } from 'uuid';
 import httpStatus from 'http-status';
 
 const createPost = async (
@@ -43,15 +41,7 @@ const createPost = async (
   if (!postImages || postImages.length === 0) {
     payload.images = []; // Set images as an empty array or handle it accordingly
   } else {
-    // Uploads each image to Cloudinary using Promise.all to handle multiple asynchronous uploads.
-    const uploadedImages = await Promise.all(
-      postImages.map((image) => {
-        return sendImageToCloudinary(`postImage_${uuidv4()}`, image.path);
-      }),
-    );
-
-    // Map the uploaded image URLs to payload
-    payload.images = uploadedImages.map((img) => img.secure_url as string);
+    payload.images = postImages.map((image) => image.path); // Use Cloudinary URLs from multer
   }
 
   const post = await Post.create({ ...payload, user: userId });
@@ -345,7 +335,7 @@ const updateMyPost = async (
     throw new AppError(httpStatus.NOT_FOUND, 'User profile does not exist!');
 
   if (profile.isDeleted === true) {
-    throw new AppError(httpStatus.FORBIDDEN, 'your account has been deleted');
+    throw new AppError(httpStatus.FORBIDDEN, 'Your account has been deleted');
   }
 
   const post = await Post.findOne({ _id: postId, user: userId });
@@ -357,33 +347,26 @@ const updateMyPost = async (
     throw new AppError(httpStatus.NOT_FOUND, 'Post is not published');
   }
 
-  // Upload new images to Cloudinary if provided
+  // Handle images: If no new images are provided, retain the old ones
   const postImages = images?.postImages ?? [];
 
-  // Upload images to Cloudinary and map the URLs to `uploadedImages`
-  const uploadedImages = await Promise.all(
-    postImages.map((image) =>
-      sendImageToCloudinary(`postImage_${uuidv4()}`, image.path),
-    ),
-  );
-
-  // If new images are provided, merge with existing images, else retain old images
-  if (uploadedImages.length > 0) {
-    // Ensure post.images is an array before spreading it
+  // If new images are provided, map their paths to the data object
+  if (postImages.length > 0) {
     data.images = [
-      ...(post.images ?? []),
-      ...uploadedImages.map((img) => img.secure_url as string),
+      ...(post.images ?? []), // Retain existing images
+      ...postImages.map((image) => image.path), // Add new images
     ];
   } else {
     // If no new images are uploaded, retain the existing images
     data.images = post.images ?? [];
   }
 
-  // If no data or files are provided, simply return the current profile
+  // If no data or files are provided, simply return the current post data
   if (Object.keys(data).length === 0) {
-    return profile;
+    return post;
   }
 
+  // Update the post with the new data
   return await Post.findByIdAndUpdate(postId, data, { new: true });
 };
 

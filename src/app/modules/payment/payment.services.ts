@@ -18,7 +18,7 @@ const confirmationService = async (
 
   let message = '';
   let description = '';
-  let redirectUrl = 'http://localhost:3000/';
+  let redirectUrl = 'https://pettales.vercel.app/';
 
   if (verifyResponse && verifyResponse.pay_status === 'Successful') {
     if (paymentType === 'unlockPost') {
@@ -41,7 +41,7 @@ const confirmationService = async (
         $addToSet: { isUnlockedBy: result.userId }, // Avoid duplicate entries
       });
 
-      redirectUrl = `http://localhost:3000/newsfeed/posts/${result.postId}`;
+      redirectUrl = `https://pettales.vercel.app/newsfeed/posts/${result.postId}`;
       message = 'Successfully Paid!';
       description =
         'Your payment was successful! You can now access your content.';
@@ -68,7 +68,7 @@ const confirmationService = async (
         // console.log('After saving:', user.password);
       }
 
-      redirectUrl = `http://localhost:3000/newsfeed/userprofile/${upgrade.userId}`;
+      redirectUrl = `https://pettales.vercel.app/newsfeed/userprofile/${upgrade.userId}`;
       message = 'Successfully upgraded to premium!';
       description = 'Your account has been upgraded to premium status.';
     }
@@ -78,16 +78,81 @@ const confirmationService = async (
       'Unfortunately, your payment failed. Please try again or contact support.';
   }
 
-  const filePath = join(__dirname, '../../../views/confirmation.html');
-  let template = readFileSync(filePath, 'utf-8');
+  // const filePath = join(__dirname, '../../../views/confirmation.html');
+  // let template = readFileSync(filePath, 'utf-8');
 
-  // Replace placeholders with actual values
-  template = template
-    .replace('{{message}}', message)
-    .replace('{{description}}', description)
-    .replace('{{redirectUrl}}', redirectUrl); // Set the dynamic URL
+  // // Replace placeholders with actual values
+  // template = template
+  //   .replace('{{message}}', message)
+  //   .replace('{{description}}', description)
+  //   .replace('{{redirectUrl}}', redirectUrl); // Set the dynamic URL
 
-  return template;
+  return `
+  <!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Payment Confirmation</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f9f9f9;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+      }
+
+      .confirmation-container {
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        padding: 2rem;
+        text-align: center;
+        width: 100%;
+        max-width: 500px;
+      }
+
+      .confirmation-container h1 {
+        font-size: 2rem;
+        margin-bottom: 1rem;
+      }
+
+      .confirmation-container p {
+        color: #555;
+        font-size: 1.1rem;
+        line-height: 1.6;
+      }
+
+      .button {
+        margin-top: 1.5rem;
+        padding: 0.75rem 1.5rem;
+        background-color: #10798b;
+        color: #fff;
+        text-decoration: none;
+        border-radius: 5px;
+        font-size: 1rem;
+      }
+
+      .button:hover {
+        background-color: #0a5c6b;
+      }
+    </style>
+  </head>
+
+  <body>
+   <div class="confirmation-container">
+          <h1>${message}</h1>
+          <p>${description}</p>
+          <a href="${redirectUrl}" class="button">Go Back</a>
+        </div>
+  </body>
+</html>
+
+  `;
 };
 
 export const paymentServices = {

@@ -1,13 +1,13 @@
 import { Router } from 'express';
 import auth from '../../Middleware/auth';
 import { USER_Role } from '../User/user.constant';
-import { uploadMultipleImage } from '../../utils/sendingImageToCloudinary';
 import validateImageFileRequest from '../../Middleware/validateImageFileRequest';
 import { ImageFilesArrayZodSchema } from './postImage.validation';
 import { parseBody } from '../../Middleware/bodyParser';
 import validateRequest from '../../Middleware/validateRequest';
 import { createPostZodSchema, updatePostZodSchema } from './post.validation';
 import { PostController } from './post.controller';
+import { uploadMultipleImage } from '../../config/multer.config';
 
 const router = Router();
 router.post(

@@ -5,10 +5,7 @@ import { UserController } from './user.controller';
 import validateRequest from '../../Middleware/validateRequest';
 import { updateUserValidationSchema } from './user.validation';
 import { parseBody } from '../../Middleware/bodyParser';
-import {
-  // upload,
-  uploadSingleImage,
-} from '../../utils/sendingImageToCloudinary';
+import { uploadSingleImage } from '../../config/multer.config';
 
 const router = Router();
 

@@ -8,6 +8,8 @@ import { paymentRoutes } from '../modules/payment/payment.route';
 import { UnlockPostRoutes } from '../modules/UnlockPost/unlockPost.route';
 import { StatusUpgradeRoutes } from '../modules/Status-Upgrade/statusUpgrade.route';
 import { AdminRoutes } from '../modules/Admin/admin.route';
+import { ChatRoutes } from '../modules/Chat/chat.route';
+import { MessageRoutes } from '../modules/Message/message.route';
 
 const router = Router();
 
@@ -47,6 +49,14 @@ const moduleRoutes = [
   {
     path: '/statusUpgrade',
     route: StatusUpgradeRoutes,
+  },
+  {
+    path: '/chat',
+    route: ChatRoutes,
+  },
+  {
+    path: '/message',
+    route: MessageRoutes,
   },
 ];
 

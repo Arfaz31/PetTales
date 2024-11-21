@@ -5,7 +5,6 @@ import { TUser } from './user.interface';
 import { User } from './user.model';
 import { JwtPayload } from 'jsonwebtoken';
 import { TImageFile } from '../../Interface/image.interface';
-import { sendImageToCloudinary } from '../../utils/sendingImageToCloudinary';
 import mongoose from 'mongoose';
 
 const getAllUsersFromDB = async (query: Record<string, unknown>) => {
@@ -60,18 +59,12 @@ const updateMyProfile = async (
 
   // Upload profilePhoto to Cloudinary if provided
   if (profilePhoto) {
-    const imageName = `${profile._id}_profilePhoto`;
-    const path = profilePhoto.path; // No need to access `[0]` since it's a single file
-    const { secure_url } = await sendImageToCloudinary(imageName, path);
-    data.profilePhoto = secure_url as string;
+    data.profilePhoto = profilePhoto.path;
   }
 
   // Upload coverImg to Cloudinary if provided
   if (coverImg) {
-    const imageName = `${profile._id}_coverImg`;
-    const path = coverImg.path; // No need to access `[0]` since it's a single file
-    const { secure_url } = await sendImageToCloudinary(imageName, path);
-    data.coverImg = secure_url as string;
+    data.coverImg = coverImg.path;
   }
 
   // If no data or files are provided, simply return the current profile

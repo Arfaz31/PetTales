@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-const MAX_UPLOAD_SIZE = 1024 * 1024 * 30; // 30mb
+const MAX_UPLOAD_SIZE = 1024 * 1024 * 20; // 20mb
 const ACCEPTED_FILE_TYPES = [
   'image/png',
   'image/jpeg',
@@ -20,7 +20,7 @@ const ImageFileZodSchema = z.object({
     .number()
     .refine(
       (size) => size <= MAX_UPLOAD_SIZE,
-      'File size must be less than 4MB',
+      'File size must be less than 20MB',
     ),
   filename: z.string(),
 });
