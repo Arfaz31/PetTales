@@ -10,11 +10,23 @@ export const addMessage = async (payload: IMessage) => {
     session.startTransaction();
 
     // Destructure payload
-    const { senderId, chatId, text, receiverId } = payload;
+    const { senderId, receiverId, text, chatId } = payload;
 
-    // Find or create chat
-    let chat = chatId ? await Chat.findById(chatId).session(session) : null;
+    let chat;
 
+    // If chatId is provided, find the chat directly
+    if (chatId) {
+      chat = await Chat.findById(chatId).session(session);
+    }
+
+    // If chatId is not provided or chat doesn't exist, search by members
+    if (!chat) {
+      chat = await Chat.findOne({
+        members: { $all: [senderId, receiverId] }, // Match chats with both users
+      }).session(session);
+    }
+
+    // If no existing chat is found, create a new one
     if (!chat) {
       chat = new Chat({ members: [senderId, receiverId] });
       await chat.save({ session });
@@ -24,15 +36,22 @@ export const addMessage = async (payload: IMessage) => {
       }
     }
 
-    // Add the message
-    const message = new Message({ chatId: chat._id, senderId, text });
+    // Add the message to the chat
+    const message = new Message({
+      chatId: chat._id,
+      senderId,
+      text,
+    });
+
     await message.save({ session });
 
+    // Commit the transaction
     await session.commitTransaction();
     session.endSession();
 
     return { chat, message };
   } catch (error) {
+    // Rollback the transaction in case of errors
     await session.abortTransaction();
     session.endSession();
     throw error;

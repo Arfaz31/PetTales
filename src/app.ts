@@ -15,7 +15,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(cookieParser());
 app.use(
   cors({
-    origin: 'https://pettales.vercel.app/',
+    origin: 'http://localhost:3000/',
     credentials: true,
   }),
 ); //It allows frontend applications from different domains to communicate with your server.

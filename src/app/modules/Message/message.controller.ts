@@ -15,6 +15,7 @@ export const addMessage = catchAsync(async (req, res) => {
 
 export const getMessages = catchAsync(async (req, res) => {
   const { chatId } = req.params;
+
   const result = await MessageServices.getMessages(chatId);
   sendResponse(res, {
     statusCode: httpStatus.OK,

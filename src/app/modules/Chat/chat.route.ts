@@ -19,7 +19,7 @@ router.get(
 router.get(
   '/findSpecificChat/:userId1/:userId2',
   auth(USER_Role.user, USER_Role.admin),
-  ChatController.getUserChats,
+  ChatController.getSpeficicChat,
 );
 
 export const ChatRoutes = router;

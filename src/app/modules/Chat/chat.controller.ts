@@ -13,7 +13,7 @@ import { ChatServices } from './chat.services';
 //   });
 // });
 
-export const getUserChats = catchAsync(async (req, res) => {
+const getUserChats = catchAsync(async (req, res) => {
   const { id } = req.params;
   const result = await ChatServices.userChats(id);
   sendResponse(res, {
@@ -23,7 +23,7 @@ export const getUserChats = catchAsync(async (req, res) => {
     data: result,
   });
 });
-export const getSpeficicChat = catchAsync(async (req, res) => {
+const getSpeficicChat = catchAsync(async (req, res) => {
   const { userId1, userId2 } = req.params;
   const result = await ChatServices.findChat(userId1, userId2);
   sendResponse(res, {
@@ -36,4 +36,5 @@ export const getSpeficicChat = catchAsync(async (req, res) => {
 
 export const ChatController = {
   getUserChats,
+  getSpeficicChat,
 };
