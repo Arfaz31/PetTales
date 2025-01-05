@@ -6,7 +6,7 @@ let activeUsers: Array<{ userId: string; socketId: string }> = [];
 export const socketServer = (server: HttpServer) => {
   const io = new SocketIOServer(server, {
     cors: {
-      origin: 'https://pettales.vercel.app',
+      origin: 'http://localhost:3000',
     },
   });
 
